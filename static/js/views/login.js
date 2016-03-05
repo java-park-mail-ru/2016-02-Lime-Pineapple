@@ -25,7 +25,7 @@ define([
                 login = $form.find("input[name='login']").val(),
                 password = $form.find("input[name='password']").val();
             // Send the data using post
-            var url = Settings.getActiveServerUrl() + '/session';
+            var url = Settings.getActiveServerUrl() + '/api/v1/session';
             console.log("Sending request to: " + url + " ...");
             $.ajax(
                 {

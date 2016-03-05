@@ -34,7 +34,7 @@ public class User {
         return this.id;
     }
 
-    public Long setId(Long id) {
+    public Long setId(@NotNull Long id) {
         return this.id = id;
     }
 

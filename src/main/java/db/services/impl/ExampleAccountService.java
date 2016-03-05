@@ -29,8 +29,8 @@ public class ExampleAccountService implements AccountService {
 
 
     public ExampleAccountService() {
-        addUser(new User("admin", "admin"));
-        addUser(new User("guest", "12345"));
+        addUser(new User("admin@admin.ru", "admin"));
+        addUser(new User("guest@mail.ru", "12345"));
     }
 
 
