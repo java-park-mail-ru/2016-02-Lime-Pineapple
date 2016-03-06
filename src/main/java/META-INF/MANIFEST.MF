@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Class-Path: javax.annotation-api-1.2.jar jetty-servlets-8.1.17.v201504
+ 15.jar jetty-continuation-8.1.17.v20150415.jar jetty-webapp-8.1.17.v2
+ 0150415.jar jetty-xml-8.1.17.v20150415.jar jetty-util-8.1.17.v2015041
+ 5.jar jetty-servlet-8.1.17.v20150415.jar jetty-security-8.1.17.v20150
+ 415.jar jetty-server-8.1.17.v20150415.jar javax.servlet-3.0.0.v201112
+ 011016.jar jetty-http-8.1.17.v20150415.jar jetty-io-8.1.17.v20150415.
+ jar jetty-client-8.1.17.v20150415.jar jersey-common-2.22.2.jar valida
+ tion-api-1.1.0.Final.jar annotations-13.0.jar javax.json-1.0.4.jar je
+ rsey-client-2.22.2.jar osgi-resource-locator-1.0.1.jar hk2-utils-2.4.
+ 0-b34.jar jetty-util-9.3.7.v20160115.jar jersey-container-servlet-2.2
+ 2.2.jar jetty-io-9.3.7.v20160115.jar hk2-api-2.4.0-b34.jar jersey-con
+ tainer-servlet-core-2.22.2.jar gson-2.6.1.jar javassist-3.18.1-GA.jar
+  jersey-server-2.22.2.jar jetty-server-9.3.7.v20160115.jar log4j-iost
+ reams-2.5.jar freemarker-2.3.23.jar jersey-media-jaxb-2.22.2.jar jett
+ y-security-9.3.7.v20160115.jar log4j-core-2.5.jar org.eclipse.persist
+ ence.moxy-2.6.0.jar log4j-api-2.5.jar jersey-media-moxy-2.22.2.jar je
+ tty-http-9.3.7.v20160115.jar org.eclipse.persistence.core-2.6.0.jar j
+ avax.inject-2.4.0-b34.jar jersey-entity-filtering-2.22.2.jar hk2-loca
+ tor-2.4.0-b34.jar jetty-servlet-9.3.7.v20160115.jar jersey-guava-2.22
+ .2.jar aopalliance-repackaged-2.4.0-b34.jar javax.ws.rs-api-2.0.1.jar
+  org.eclipse.persistence.asm-2.6.0.jar javax.servlet-api-3.1.0.jar
+Main-Class: main.Main
+

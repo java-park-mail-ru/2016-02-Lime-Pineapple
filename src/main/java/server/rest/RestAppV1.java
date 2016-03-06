@@ -8,9 +8,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
-/**
- * Created by e.shubin on 25.02.2016.
- */
+
 // JERSEY ignores ApplicationPath
 @ApplicationPath("/api/v1/")
 public class RestAppV1 extends Application {
