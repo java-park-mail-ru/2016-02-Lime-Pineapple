@@ -6,17 +6,29 @@ import org.jetbrains.annotations.NotNull;
 
 public class User {
     private final static Logger logger = LogManager.getLogger(User.class);
+    @NotNull
     private Long    id           = 0L;
+    @NotNull
     private String  login        = "";
+    @NotNull
     private String  password     = "";
+    @NotNull
+    private String Nickname="";
+    private Integer score;
 
     public User() {
+        login = "";
+        password = "";
+        score = 0;
+        Nickname = "";
         logger.debug("[+] Empty instance created.");
     }
 
     public User(@NotNull String login, @NotNull String password) {
-        this.login = login;
-        this.password = password;
+
+        setLogin(login);
+        setPassword(password);
+        score = 0;
         logger.debug("[+] Non-empty instance created.");
     }
 
@@ -46,4 +58,8 @@ public class User {
     public String setPassword(@NotNull String password) {
         return this.password = password;
     }
+
+    @NotNull
+    public Integer getscore() { return this.score; }
+    public void increasescore(int points) { this.score+=points; }
 }
