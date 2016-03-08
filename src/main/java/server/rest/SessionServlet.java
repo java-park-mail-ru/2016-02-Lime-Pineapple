@@ -20,7 +20,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.rest.common.Utils;
 
-
+/**
+ * Created by Raaw on 02-Mar-16.
+ */
 @Singleton
 @Path("/session")
 public class SessionServlet extends HttpServlet {

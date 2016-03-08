@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Created by Raaw on 02-Mar-16.
  */
-public class ExampleAccountService extends AccountService {
+public class ExampleAccountService implements AccountService {
     private static final Logger logger = LogManager.getLogger(ExampleAccountService.class);
 
     private AtomicLong autoIncrementId = new AtomicLong(0L);

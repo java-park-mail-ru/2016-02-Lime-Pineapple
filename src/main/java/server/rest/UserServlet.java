@@ -15,7 +15,9 @@ import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
+/**
+ * Created by Raaw on 02-Mar-16.
+ */
 @Singleton
 @Path("/user/")
 public class UserServlet extends HttpServlet {

@@ -7,7 +7,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlets.CrossOriginFilter;//библиотека добавлена в libs
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
 import server.rest.RestAppV1;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +20,9 @@ import javax.servlet.DispatcherType;
 import javax.ws.rs.core.Application;
 import java.util.EnumSet;
 
-
+/**
+ * @author esin88
+ */
 public class Main {
     static final Logger logger = LogManager.getLogger(Main.class.getName());
     public static final int DEFAULT_PORT = 9999;
@@ -34,10 +36,10 @@ public class Main {
         } else {
             port = DEFAULT_PORT;
             // TODO: Configure logger and change back to info
-            logger.debug(String.format("Port is not specified. Default port - %d is used.", DEFAULT_PORT));
+            logger.error(String.format("Port is not specified. Default port - %d is used.", DEFAULT_PORT));
         }
 
-        logger.debug(String.format("Starting at port: %d", port));//теперь выводит использованный порт а не дефолтный
+        logger.error(String.format("Starting at port: %d",DEFAULT_PORT));
 
         final Server srv = new Server(port);
 
@@ -49,6 +51,7 @@ public class Main {
         contextHandler.setContextPath("/");
         // new AccountService - User info storage and handler
         final AccountService accountService = new ExampleAccountService();
+
         // @see Cross-Origin Resource Sharing (CORS)
         // This thing is needed to inject header into response
         // It behaves like Middleware between Servlets and response handlers
