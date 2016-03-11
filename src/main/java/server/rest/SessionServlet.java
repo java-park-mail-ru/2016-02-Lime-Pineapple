@@ -1,11 +1,10 @@
 package server.rest;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import db.services.AccountService;
 
 import javax.inject.Singleton;
-import javax.json.Json;
+//import javax.json.Json;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,7 +13,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +41,7 @@ public class SessionServlet extends HttpServlet {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkSession(@Context HttpHeaders headers, @Context HttpServletRequest request) {
-        Long uid = getIdFromRequest(request), realUid = null;
+        Long uid = getIdFromRequest(request);
         User realUser = this.accountService.getUser(uid);
         if ( realUser == null ) {
             return Response.status(Response.Status.BAD_REQUEST).entity(EMPTY_JSON).build();
@@ -60,6 +58,7 @@ public class SessionServlet extends HttpServlet {
     public Response addSession(User requestedUser, @Context HttpServletRequest request) {
         final User realUser = accountService.getUser(requestedUser.getLogin());
         if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
+            logger.info("[!] Invalid logging "+requestedUser.getLogin());
             return Response.status(Response.Status.BAD_REQUEST).entity(EMPTY_JSON).build();
         } else {
             HttpSession currentSession = request.getSession();

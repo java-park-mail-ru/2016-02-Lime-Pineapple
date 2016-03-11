@@ -1,9 +1,5 @@
 package db.models.game;
 
-/**
- * Created by Raaw on 05-Mar-16.
- */
-
 public enum RoomStatus {
     LOOKING_FOR_PEOPLE, // First state, when Room was created
     PREPARING_FOR_GAME, // Next state, when Room is populated with enough people
