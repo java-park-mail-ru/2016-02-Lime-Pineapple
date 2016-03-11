@@ -4,21 +4,11 @@ import db.services.AccountService;
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.core.appender.SyslogAppender;
-
-import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Created by Raaw on 02-Mar-16.
- */
 public class ExampleAccountService extends AccountService {
     private static final Logger logger = LogManager.getLogger(ExampleAccountService.class);
 
@@ -29,8 +19,8 @@ public class ExampleAccountService extends AccountService {
 
 
     public ExampleAccountService() {
-        addUser(new User("admin@admin.ru", "admin"));
-        addUser(new User("guest@mail.ru", "12345"));
+        addUser(new User("admin@admin.ru", "admin", "Admin"));
+        addUser(new User("guest@mail.ru", "12345", "Guest"));
     }
 
 
@@ -46,8 +36,9 @@ public class ExampleAccountService extends AccountService {
             else {
                 this.table_id_users.put(userId, user);
                 _id_users_changed = true;
-                this.table_name_users.put(user.getLogin(), user);
                 _name_users_changed = true;
+                this.table_name_users.put(user.getLogin(), user);
+
             }
         }
         catch (Exception e) {
@@ -56,6 +47,7 @@ public class ExampleAccountService extends AccountService {
                 this.table_id_users.remove(userId);
             if(_name_users_changed)
                 this.table_name_users.remove(user.getLogin());
+            logger.error("Error during adding user");
             return false;
         }
         return true;
@@ -63,6 +55,7 @@ public class ExampleAccountService extends AccountService {
     public boolean addUser(User user) {
         user.setId(this.autoIncrementId.incrementAndGet());
         return this.addUser(user.getId(), user);
+
     }
 
     public User getUser(Long userId) {

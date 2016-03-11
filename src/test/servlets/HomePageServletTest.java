@@ -47,8 +47,6 @@ public class HomePageServletTest {
 
         HomePageServlet homePage = new HomePageServlet(accountServer);
         HomePageServlet spy = spy(homePage);
-
-
         homePage.doGet(request, response);
 
         assertEquals("Hasta la vista!\n", stringWriter .toString());

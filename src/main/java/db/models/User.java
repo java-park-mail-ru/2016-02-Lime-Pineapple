@@ -24,10 +24,10 @@ public class User {
         logger.debug("[+] Empty instance created.");
     }
 
-    public User(@NotNull String login, @NotNull String password) {
-
+    public User(@NotNull String login, @NotNull String password, @NotNull String nickname) {
         setLogin(login);
         setPassword(password);
+        setNickname(nickname);
         score = 0;
         logger.debug("[+] Non-empty instance created.");
     }
@@ -58,8 +58,10 @@ public class User {
     public String setPassword(@NotNull String password) {
         return this.password = password;
     }
-
     @NotNull
     public Integer getscore() { return this.score; }
     public void increasescore(int points) { this.score+=points; }
+    @NotNull
+    public String getNickname() {return this.Nickname;  }
+    public void setNickname(@NotNull String newnick) {this.Nickname=newnick; }
 }
