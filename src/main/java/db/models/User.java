@@ -13,14 +13,14 @@ public class User {
     @NotNull
     private String  password     = "";
     @NotNull
-    private String Nickname="";
+    private String nickname="";
     private Integer score;
 
     public User() {
         login = "";
         password = "";
         score = 0;
-        Nickname = "";
+        nickname = "";
         logger.debug("[+] Empty instance created.");
     }
 
@@ -60,6 +60,11 @@ public class User {
     }
 
     @NotNull
-    public Integer getscore() { return this.score; }
-    public void increasescore(int points) { this.score+=points; }
+    public String getNickname() { return nickname; }
+    public void setNickname(@NotNull String nickname) { this.nickname = nickname; }
+
+    @NotNull
+    public Integer getScore() { return this.score; }
+    public void increaseScore(int delta) { this.score+=delta; }
+    public void setScore(int score) { this.score = score; }
 }

@@ -19,12 +19,12 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Created by Raaw on 02-Mar-16.
  */
-public class ExampleAccountService extends AccountService {
+public class ExampleAccountService implements AccountService {
     private static final Logger logger = LogManager.getLogger(ExampleAccountService.class);
 
     private AtomicLong autoIncrementId = new AtomicLong(0L);
     private ConcurrentMap<Long, User> table_id_users = new ConcurrentHashMap<>();
-    private ConcurrentMap<String, User> table_name_users = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, WeakReference<User>> table_name_users = new ConcurrentHashMap<>();
 
 
 
@@ -39,14 +39,15 @@ public class ExampleAccountService extends AccountService {
     }
 
     public boolean addUser(Long userId, User user) {
-        boolean _id_users_changed = false, _name_users_changed = false;
+        boolean _id_users_changed = false,
+                _name_users_changed = false;
         try {
             if(this.table_id_users.containsKey(userId))
                 return false;
             else {
-                this.table_id_users.put(userId, user);
+                User put_user = this.table_id_users.put(userId, user);
                 _id_users_changed = true;
-                this.table_name_users.put(user.getLogin(), user);
+                this.table_name_users.put(user.getLogin(), new WeakReference<>(put_user)); // ?
                 _name_users_changed = true;
             }
         }
@@ -60,9 +61,10 @@ public class ExampleAccountService extends AccountService {
         }
         return true;
     }
-    public boolean addUser(User user) {
-        user.setId(this.autoIncrementId.incrementAndGet());
-        return this.addUser(user.getId(), user);
+    public Long addUser(User user) {
+        Long value = this.autoIncrementId.incrementAndGet();
+        user.setId(value);
+        return this.addUser(value, user) ? value : 0;
     }
 
     public User getUser(Long userId) {
@@ -72,6 +74,7 @@ public class ExampleAccountService extends AccountService {
     }
 
     public User getUser(String userName) {
-        return this.table_name_users.get(userName);
+        //
+        return this.table_name_users.get(userName).get();
     }
 }
