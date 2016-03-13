@@ -68,5 +68,7 @@
     <orderEntry type="library" name="org.eclipse.jetty:jetty-servlets:8.1.17.v20150415" level="project" />
     <orderEntry type="library" name="org.eclipse.jetty:jetty-websocket:8.1.17.v20150415" level="project" />
     <orderEntry type="library" name="org.eclipse.jetty.websocket:websocket-servlet:9.3.8.RC0" level="project" />
+    <orderEntry type="library" name="junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="org.mockito:mockito-core:2.0.44-beta" level="project" />
   </component>
 </module>

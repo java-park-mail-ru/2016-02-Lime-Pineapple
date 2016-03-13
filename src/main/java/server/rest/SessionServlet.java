@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import db.services.AccountService;
 
 import javax.inject.Singleton;
-//import javax.json.Json;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -22,7 +22,7 @@ import server.rest.common.Utils;
 @Singleton
 @Path("/session")
 public class SessionServlet extends HttpServlet {
-    private final static String EMPTY_JSON = new JsonObject().toString(); //{}
+    private final static String EMPTY_JSON = new JsonObject().toString();
 
     private AccountService accountService;
     private final static Logger logger = LogManager.getLogger(SessionServlet.class);

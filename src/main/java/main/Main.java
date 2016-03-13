@@ -7,7 +7,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlets.CrossOriginFilter;//библиотека добавлена в libs
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
 import server.rest.RestAppV1;
 import org.apache.logging.log4j.LogManager;
@@ -33,65 +33,65 @@ public class Main {
             port = Integer.valueOf(args[0]);
         } else {
             port = DEFAULT_PORT;
-            // TODO: Configure logger and change back to info
+
             logger.debug(String.format("Port is not specified. Default port - %d is used.", DEFAULT_PORT));
         }
 
-        logger.debug(String.format("Starting at port: %d", port));//теперь выводит использованный порт а не дефолтный
+        logger.debug(String.format("Starting at port: %d", port));
 
         final Server srv = new Server(port);
 
-        // @see ContextHandler
-        // this thing is basically instatiates all Servlets and ServletHandlers
-        // We use this for Sessions, additional HEADER param in response (see below)
-        // new ContextHandler (servlet initializer)
+
+
+
+
         final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/");
-        // new AccountService - User info storage and handler
+
         final AccountService accountService = new ExampleAccountService();
-        // @see Cross-Origin Resource Sharing (CORS)
-        // This thing is needed to inject header into response
-        // It behaves like Middleware between Servlets and response handlers
+
+
+
         FilterHolder cors = contextHandler.addFilter(CrossOriginFilter.class,"/api/*", EnumSet.of(DispatcherType.REQUEST));
-        // We can manually set all hosts, to which we respond with such a header
+
         cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
         cors.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "localhost");
         cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE,OPTIONS");
         cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
 
-        // TODO: create SessionService - User sessions (active and/or authorized)
-        // TODO: create GameSessionService - currently opened games and their states
-        // TODO: create GameMechanicsService - GameLogical unit
-        // TODO: create AntiFraudGameMechanicsService - Anti-Fraud system
 
-        // new ServletHolder - container, which invokes/manages servlets
+
+
+
+
+
         final ServletHolder api_v1Holder = new ServletHolder(ServletContainer.class);
         logger.error(Application.class.getName());
         api_v1Holder.setInitParameter("javax.ws.rs.Application",RestAppV1.class.getCanonicalName());
-        // add holder to contextHandler
+
         contextHandler.addServlet(api_v1Holder,"/api/v1/*");
 
-        // Static resource servlet
+
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(true);
         resource_handler.setResourceBase("static");
-        // Used to store handlers. Basically used as Handler[]
+
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{resource_handler, contextHandler});
-        //contextHandler.setHandler(handlers);
+
 
         srv.setHandler(handlers);
 
         try
         {
             srv.start();
-            // uncomment this to see current Server dump (used modules, stats, etc)
-            // srv.dump(System.err);
+
+
             srv.join();
         }
         catch (Throwable t)
         {
-            // show
+
             t.printStackTrace(System.err);
         }
     }

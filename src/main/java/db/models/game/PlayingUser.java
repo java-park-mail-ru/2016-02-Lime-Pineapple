@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * package: db.models.game
  */
 
-// This class describes user state during game
+
 public class PlayingUser {
     User linkedUser;
     Long currentScore;

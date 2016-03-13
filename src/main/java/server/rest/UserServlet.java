@@ -50,7 +50,7 @@ public class UserServlet extends HttpServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(User user, @Context HttpHeaders headers) {
+    public Response createUser(User user) {
         if (accountService.addUser(user) == 0L) {
             return Response.status(Response.Status.OK).entity(user.getLogin()).build();
         } else {

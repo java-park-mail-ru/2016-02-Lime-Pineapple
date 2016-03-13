@@ -47,12 +47,12 @@ public class ExampleAccountService implements AccountService {
             else {
                 User put_user = this.table_id_users.put(userId, user);
                 _id_users_changed = true;
-                this.table_name_users.put(user.getLogin(), new WeakReference<>(put_user)); // ?
+                this.table_name_users.put(user.getLogin(), new WeakReference<>(put_user));
                 _name_users_changed = true;
             }
         }
         catch (Exception e) {
-            // Rollback changes
+
             if (_id_users_changed)
                 this.table_id_users.remove(userId);
             if(_name_users_changed)
@@ -74,7 +74,7 @@ public class ExampleAccountService implements AccountService {
     }
 
     public User getUser(String userName) {
-        //
+
         return this.table_name_users.get(userName).get();
     }
 }

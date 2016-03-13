@@ -9,7 +9,7 @@ import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 
-// JERSEY ignores ApplicationPath
+
 @ApplicationPath("/api/v1/")
 public class RestAppV1 extends Application {
     private final static Logger logger = LogManager.getLogger(RestAppV1.class);
@@ -20,7 +20,7 @@ public class RestAppV1 extends Application {
         AccountService accountService = new db.services.impl.ExampleAccountService();
         objects.add(new UserServlet(accountService));
         objects.add(new SessionServlet(accountService));
-        //objects.add(new SignInServlet(accountService));
+
         return objects;
     }
 }

@@ -14,7 +14,7 @@ import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 public class MessagingService extends WebSocketServlet {
     @Override
     public void configure(WebSocketServletFactory factory) {
-        factory.getPolicy().setIdleTimeout(100*1000); //100s
+        factory.getPolicy().setIdleTimeout(100*1000);
         factory.register(MessagingService.class);
     }
 

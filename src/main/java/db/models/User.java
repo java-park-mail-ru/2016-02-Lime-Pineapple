@@ -11,7 +11,7 @@ public class User implements IValidate {
         LOGIN_INVALID,
         NICKNAME_TOO_SHORT,
         NICKNAME_INVALID,
-        PASSWORD_WEAK, //use this for raw password
+        PASSWORD_WEAK,
     };
     private final static int
             VALIDATION_MIN_NICKNAME_LENGTH = 4,
@@ -28,7 +28,7 @@ public class User implements IValidate {
     @NotNull
     private String nickname="";
 
-    private Integer totalScore; //total score for all games
+    private Integer totalScore;
 
     public User() {
         login = "";
@@ -83,7 +83,7 @@ public class User implements IValidate {
     public void setScore(int score) { this.totalScore = score; }
 
     public void Validate() {
-        if ( !this.getLogin().matches( "/.+@.+\\..+/i" ) ) //any_symbol@any_symbol.any_symbol
+        if ( !this.getLogin().matches( "/.+@.+\\..+/i" ) )
             throw new ValidationException("Name invalid", (long)UserValidationErrors.LOGIN_INVALID.ordinal());
         else if ( this.getPassword().length() < VALIDATION_MIN_PASSWORD_LENGTH )
             throw new ValidationException("Password is too short.", (long)UserValidationErrors.PASSWORD_WEAK.ordinal());
