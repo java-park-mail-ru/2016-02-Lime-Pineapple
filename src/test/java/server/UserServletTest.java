@@ -1,8 +1,9 @@
-package servlets;
+package server;
 
-import account.server.AccountServer;
-import account.server.AccountService;
+import db.models.User;
+import db.services.AccountService;
 import org.junit.Test;
+import server.rest.UserServlet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,8 +16,8 @@ import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.*;
 
 
-public class HomePageServletTest {
-    private AccountService accountServer = mock(AccountServer.class);
+public class UserServletTest {
+    private AccountService accountServer = mock(AccountService.class);
 
     private HttpServletResponse getMockedResponse(StringWriter stringWriter) throws IOException {
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -39,17 +40,16 @@ public class HomePageServletTest {
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testServletAdd() throws Exception {
         final StringWriter stringWriter = new StringWriter();
         HttpServletResponse response = getMockedResponse(stringWriter);
-        HttpServletRequest request = getMockedRequest(HomePageServlet.PAGE_URL);
-        when(request.getParameter("remove")).thenReturn("");
+        HttpServletRequest request = getMockedRequest("/user");
 
-        HomePageServlet homePage = new HomePageServlet(accountServer);
-        HomePageServlet spy = spy(homePage);
-        homePage.doGet(request, response);
+        UserServlet userServlet = new UserServlet(accountServer);
+        UserServlet spy = spy(userServlet);
+        User myuser = new User("lalka", "12345");
+        userServlet.createUser(myuser);
 
-        assertEquals("Hasta la vista!\n", stringWriter .toString());
-        verify(accountServer, times(1)).removeUser();
+        verify(accountServer, times(1)).addUser(myuser);
     }
 }
