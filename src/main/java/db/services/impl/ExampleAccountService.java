@@ -7,22 +7,20 @@ import org.apache.logging.log4j.Logger;
 //import org.apache.logging.log4j.Marker;
 //import org.apache.logging.log4j.core.appender.SyslogAppender;
 
-import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+//import java.lang.ref.WeakReference;
+import java.util.*;
+//import java.util.concurrent.ConcurrentHashMap;
+//import java.util.concurrent.ConcurrentMap;
 //import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+//import java.util.concurrent.atomic.AtomicLong;
 
 
 public class ExampleAccountService implements AccountService {
     private static final Logger logger = LogManager.getLogger(ExampleAccountService.class);
 
-    private AtomicLong autoIncrementId = new AtomicLong(0L);
-    private ConcurrentMap<Long, User> table_id_users = new ConcurrentHashMap<>();
-    private ConcurrentMap<String, WeakReference<User>> table_name_users = new ConcurrentHashMap<>();
+    //private AtomicLong autoIncrementId = new AtomicLong(0L);
+    //private ConcurrentMap<Long, User> table_id_users = new ConcurrentHashMap<>();
+    //private ConcurrentMap<String, WeakReference<User>> table_name_users = new ConcurrentHashMap<>();
     private Map<String, User> users=new HashMap<>();
     private Map<Long, String> userids=new HashMap<>();
 
@@ -39,36 +37,44 @@ public class ExampleAccountService implements AccountService {
     }
 
     public boolean addUser(Long userId, User user) {
-        boolean _id_users_changed = false,
-                _name_users_changed = false;
+       // boolean _id_users_changed = false,
+       //         _name_users_changed = false;
         try {
-            if(this.table_id_users.containsKey(userId))
+            if(this.userids.containsKey(userId)) {
+                logger.error("User with this id already exists");
                 return false;
+            }
             else {
-                User put_user = this.table_id_users.put(userId, user);
-                _id_users_changed = true;
-                _name_users_changed = true;
-                this.table_name_users.put(user.getLogin(), new WeakReference<>(put_user)); // ?
+                users.put(user.getLogin(), user);
+                return true;
+                //_id_users_changed = true;
+                //_name_users_changed = true;
+                //this.table_name_users.put(user.getLogin(), new WeakReference<>(put_user)); // ?
             }
         }
         catch (Exception e) {
             // Rollback changes
-            if (_id_users_changed)
-                this.table_id_users.remove(userId);
-            if(_name_users_changed)
-                this.table_name_users.remove(user.getLogin());
+            //if (_id_users_changed)
+            //    this.table_id_users.remove(userId);
+            //if(_name_users_changed)
+            //    this.table_name_users.remove(user.getLogin());
             logger.error("Error");
             return false;
         }
-        return true;
+
     }
     public Long addUser(User user) {
-        Long value = new Long(this.users.size());
+        long value = (this.users.size());
         user.setId(value+1);
-        this.addUser(value, user);
-        users.put(user.getLogin(), user);
-        userids.put(value, user.getLogin());
-        return value;
+        if (this.addUser(value, user)) {
+            userids.put(value, user.getLogin());
+            return user.getId();
+        }
+        else {
+            logger.error("User was not registrated");
+            return value;
+        }
+
     }
 
     public User getUser(Long userId) {
@@ -82,8 +88,12 @@ public class ExampleAccountService implements AccountService {
         return this.users.get(userName);
     }
     public Collection<String>getuserScores() {
-        Map<Integer, String> player_scores=new HashMap<>();
-
+        Map<Integer, String> player_scores=new TreeMap<>();
+        Iterator<Map.Entry<String, User>>all_users=users.entrySet().iterator();
+        while (all_users.hasNext()) {
+            User current=all_users.next().getValue();
+            player_scores.put(current.getScore(), current.getNickname()+" scored "+current.getScore().toString()+" points");
+        }
         return player_scores.values();
     }
 
