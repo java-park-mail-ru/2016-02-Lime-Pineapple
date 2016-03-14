@@ -1,6 +1,5 @@
 package main;
 
-
 import db.services.AccountService;
 import db.services.impl.ExampleAccountService;
 import org.eclipse.jetty.server.Handler;
@@ -19,7 +18,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.Application;
 import java.util.EnumSet;
-
 
 public class Main {
     static final Logger logger = LogManager.getLogger(Main.class.getName());
