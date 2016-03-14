@@ -81,4 +81,10 @@ public class ExampleAccountService implements AccountService {
         //
         return this.users.get(userName);
     }
+    public Collection<String>getuserScores() {
+        Map<Integer, String> player_scores=new HashMap<>();
+
+        return player_scores.values();
+    }
+
 }
