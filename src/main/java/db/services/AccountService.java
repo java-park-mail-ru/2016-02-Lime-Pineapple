@@ -12,4 +12,5 @@ public interface AccountService {
     Long addUser(User user);
     User getUser(Long userId);
     User getUser(String userName);
+    Collection<String> getuserScores();
 }
