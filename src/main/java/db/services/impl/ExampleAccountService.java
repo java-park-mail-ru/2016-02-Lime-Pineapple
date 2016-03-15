@@ -5,15 +5,17 @@ import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ExampleAccountService implements AccountService {
+    private AtomicLong autoIncrementId = new AtomicLong(0L);
     private static final Logger logger = LogManager.getLogger(ExampleAccountService.class);
-    private Map<String, User> users=new HashMap<>();
-    private Map<Long, String> userids=new HashMap<>();
-
+    private Map<String, User> users = new HashMap<>();
+    private Map<Long, String> userids = new HashMap<>();
     public ExampleAccountService() {
         addUser(new User("admin@admin.ru", "admin"));
         addUser(new User("guest@mail.ru", "12345"));
+        users.get("admin@admin.ru").increaseScore(10);
     }
 
     public Collection<User> getAllUsers() {
@@ -39,8 +41,8 @@ public class ExampleAccountService implements AccountService {
 
     }
     public Long addUser(User user) {
-        long value = (this.users.size());
-        user.setId(value+1);
+        long value = this.autoIncrementId.incrementAndGet();
+        user.setId(value);
         if (this.addUser(value, user)) {
             userids.put(value, user.getLogin());
             return user.getId();
@@ -65,10 +67,10 @@ public class ExampleAccountService implements AccountService {
     public Collection<String>getuserScores() {
         Map<Integer, String> player_scores=new TreeMap<>();
         Iterator<Map.Entry<String, User>>all_users=users.entrySet().iterator();
-        while (all_users.hasNext()) {
-            User current=all_users.next().getValue();
-            player_scores.put(current.getScore(), current.getNickname()+" scored "+current.getScore().toString()+" points");
-        }
+        all_users.forEachRemaining(cur-> {
+            User current=cur.getValue();
+            player_scores.put(current.getScore(), current.getNickname()+" scored: "+current.getScore()+" points");
+        });
         return player_scores.values();
     }
 

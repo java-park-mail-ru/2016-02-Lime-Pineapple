@@ -10,6 +10,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
+import java.util.*;
 
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
@@ -45,6 +46,15 @@ public class UserServlet extends HttpServlet {
         } else {
             return Response.status(Response.Status.OK).entity(user).build();
         }
+    }
+
+    @GET
+    @Path("/totalScores")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response showScoreTable() {
+        logger.error("[*] Getting scoreboard...");
+        final Collection<String> allscores = accountService.getuserScores();
+        return Response.status(Response.Status.OK).entity(allscores.toArray(new String[allscores.size()])).build();
     }
 
     @POST
