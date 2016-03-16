@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 @Path("/user/")
 public class UserServlet extends HttpServlet {
     private AccountService accountService;
-    private final static Logger logger = LogManager.getLogger(UserServlet.class);
+    private final static Logger logger = LogManager.getLogger(UserServlet.class.toString());
 
     public UserServlet(AccountService accountService) {
         this.accountService = accountService;

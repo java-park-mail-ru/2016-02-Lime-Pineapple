@@ -29,7 +29,7 @@ public enum CardType {
         return cardName;
     }
 
-    @NotNull
+
     public int getCardId()
     {
         return this.cardId;

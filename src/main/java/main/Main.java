@@ -48,7 +48,6 @@ public class Main {
         final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/");
 
-        final AccountService accountService = new ExampleAccountService();
 
 
 

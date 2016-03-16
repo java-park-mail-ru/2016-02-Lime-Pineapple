@@ -4,16 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>LiPi</groupId>
-    <artifactId>12</artifactId>
+    <groupId>org.lipi</groupId>
+    <artifactId>WhackAMole</artifactId>
     <version>0.1-SNAPSHOT</version>
     <properties>
-        <log4j.configuration>src/main/properties/log4j2.xml</log4j.configuration>
+        <log4j.configuration>src/main/resources/log4j2.properties</log4j.configuration>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <org.jetbrains.annotations.version>13.0</org.jetbrains.annotations.version>
-        <org.eclipse.jetty.version>9.3.7.v20160115</org.eclipse.jetty.version>
+        <org.eclipse.jetty.version>8.1.19.v20160209</org.eclipse.jetty.version>
+        <org.eclipse.jetty.websocket-servlet.version>9.3.8.v20160314</org.eclipse.jetty.websocket-servlet.version>
         <org.glassfish.jersey.version>2.22.2</org.glassfish.jersey.version>
     </properties>
 
@@ -21,13 +22,14 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <targetPath>${project.build.directory}</targetPath>
+                <!--<targetPath>${project.build.directory}</targetPath>
                 <includes>
-                    <include>log4j.xml</include>
-                </includes>
+                    <include>log4j.properties</include>
+                </includes>-->
             </resource>
         </resources>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -44,8 +46,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer">
                                 </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>main.Main</mainClass>
                                 </transformer>
                             </transformers>
@@ -72,7 +73,31 @@
             <artifactId>annotations</artifactId>
             <version>${org.jetbrains.annotations.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>${org.eclipse.jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-websocket</artifactId>
+            <version>${org.eclipse.jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-servlet</artifactId>
+            <version>${org.eclipse.jetty.websocket-servlet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.0.44-beta</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
@@ -125,6 +150,8 @@
             <artifactId>gson</artifactId>
             <version>2.6.1</version>
         </dependency>
+
+
 
     </dependencies>
 </project>
