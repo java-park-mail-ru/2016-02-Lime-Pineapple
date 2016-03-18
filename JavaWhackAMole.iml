@@ -53,5 +53,7 @@
     <orderEntry type="library" name="org.mockito:mockito-all:1.7" level="project" />
     <orderEntry type="library" name="server" level="project" />
     <orderEntry type="library" name="rest" level="project" />
+    <orderEntry type="library" name="org.glassfish.jersey.media:jersey-media-jaxb:2.22.2" level="project" />
+    <orderEntry type="library" name="org.glassfish.jersey.media:jersey-media-json-jackson:2.22.2" level="project" />
   </component>
 </module>

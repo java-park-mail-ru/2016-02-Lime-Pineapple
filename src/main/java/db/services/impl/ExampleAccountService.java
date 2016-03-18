@@ -1,5 +1,6 @@
 package db.services.impl;
 
+import db.models.game.ScoreTable;
 import db.services.AccountService;
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
@@ -64,12 +65,13 @@ public class ExampleAccountService implements AccountService {
         //
         return this.users.get(userName);
     }
-    public Collection<String>getuserScores() {
-        Map<Integer, String> player_scores=new TreeMap<>();
+    public Collection<ScoreTable>getuserScores() {
+        Map<Integer, ScoreTable> player_scores=new TreeMap<>();
         Iterator<Map.Entry<String, User>>all_users=users.entrySet().iterator();
         all_users.forEachRemaining(cur-> {
             User current=cur.getValue();
-            player_scores.put(current.getScore(), current.getNickname()+" scored: "+current.getScore()+" points");
+            ScoreTable score=new ScoreTable(current.getScore(),current.getNickname()+" scored: "+current.getScore()+" points");
+            player_scores.put(current.getScore(), score);
         });
         return player_scores.values();
     }

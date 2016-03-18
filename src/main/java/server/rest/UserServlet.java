@@ -1,5 +1,6 @@
 package server.rest;
 
+import db.models.game.ScoreTable;
 import db.services.AccountService;
 
 import javax.inject.Singleton;
@@ -10,8 +11,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
-import java.util.*;
-
+import java.lang.String;
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,8 +53,8 @@ public class UserServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response showScoreTable() {
         logger.error("[*] Getting scoreboard...");
-        final Collection<String> allscores = accountService.getuserScores();
-        return Response.status(Response.Status.OK).entity(allscores.toArray(new String[allscores.size()])).build();
+        final Collection<ScoreTable> allscores = accountService.getuserScores();
+        return Response.status(Response.Status.OK).entity(allscores.toArray(new ScoreTable[allscores.size()])).build();
     }
 
     @POST

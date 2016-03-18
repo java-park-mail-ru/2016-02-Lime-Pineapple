@@ -2,6 +2,8 @@ package db.services;
 
 
 import db.models.User;
+import db.models.game.ScoreTable;
+
 import java.util.Collection;
 
 public interface AccountService {
@@ -12,5 +14,5 @@ public interface AccountService {
     Long addUser(User user);
     User getUser(Long userId);
     User getUser(String userName);
-    Collection<String> getuserScores();
+    Collection<ScoreTable> getuserScores();
 }
