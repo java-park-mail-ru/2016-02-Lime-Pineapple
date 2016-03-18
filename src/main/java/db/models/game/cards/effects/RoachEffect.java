@@ -1,6 +1,5 @@
 package db.models.game.cards.effects;
 
-import db.models.User;
 import db.models.game.GameRoom;
 import db.models.game.PlayingUser;
 import db.models.game.cards.BaseCard;
@@ -14,7 +13,7 @@ import db.models.game.cards.BaseCard;
 public class RoachEffect implements ICardEffect {
     @Override
     public String getCardEffectName() {
-        return "Roach";
+        return "ROACH";
     }
 
     @Override
@@ -24,13 +23,13 @@ public class RoachEffect implements ICardEffect {
 
     @Override
     public String getCardEffectType() {
-        return "Score/Roach";
+        return "Score/ROACH";
     }
 
 
 
     @Override
-    public void ActivateCardEffect(BaseCard linkedCard, PlayingUser cardTarget, GameRoom cardOrigin) {
+    public void activateCardEffect(BaseCard linkedCard, PlayingUser cardTarget, GameRoom cardOrigin) {
         cardTarget.incrementScore(1L);
     }
 }

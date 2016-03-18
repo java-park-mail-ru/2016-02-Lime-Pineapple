@@ -1,6 +1,7 @@
 package server.rest;
 
 import db.services.AccountService;
+import db.services.impl.ExampleAccountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,12 +13,12 @@ import java.util.Set;
 
 @ApplicationPath("/api/v1/")
 public class RestAppV1 extends Application {
-    private final static Logger logger = LogManager.getLogger(RestAppV1.class);
+    private static final Logger LOGGER = LogManager.getLogger(RestAppV1.class);
     @Override
     public Set<Object> getSingletons() {
-        logger.error("[+] Started application...");
+        LOGGER.error("[+] Started application...");
         final HashSet<Object> objects = new HashSet<>();
-        AccountService accountService = new db.services.impl.ExampleAccountService();
+        final AccountService accountService = new ExampleAccountService();
         objects.add(new UserServlet(accountService));
         objects.add(new SessionServlet(accountService));
 

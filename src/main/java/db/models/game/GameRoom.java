@@ -1,6 +1,5 @@
 package db.models.game;
 
-import db.models.User;
 import db.models.game.cards.BaseCard;
 import db.models.validation.IValidate;
 import org.jetbrains.annotations.NotNull;
@@ -13,10 +12,11 @@ public class GameRoom implements IValidate {
 
     private short totalCards;
     private short playedCards;
-    private BaseCard[][] Deck;
+    private BaseCard[][] deck;
     private HashMap<PlayingUser, BaseCard> userHands;
 
-    private Vector<PlayingUser> clickers_team, deck_team;
+    private Vector<PlayingUser> clickersTeam;
+    private Vector<PlayingUser> deckTeam;
 
 
     @NotNull
@@ -37,7 +37,8 @@ public class GameRoom implements IValidate {
         }
     }
 
-    public void Validate() {
+    @Override
+    public void validate() {
 
     }
 

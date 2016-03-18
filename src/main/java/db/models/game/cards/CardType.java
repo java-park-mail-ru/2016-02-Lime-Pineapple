@@ -1,22 +1,21 @@
 package db.models.game.cards;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * created: 12-Mar-16
  * package: db.models.game
  */
 public enum CardType {
-    Generic("Generic Card", 0),
-    Roach("Roach Card", 1),
-    Piggie("Piggie Card", 2);
+    GENERIC("GENERIC Card", 0),
+    ROACH("ROACH Card", 1),
+    PIGGIE("PIGGIE Card", 2);
 
     private final String cardName;
     private final int cardId;
     /**
-     * @param cardName
+     * @param cardName Name of the card
+     * @param cardId Card number (id)
      */
-    private CardType(final String cardName, final int cardId) {
+    CardType(final String cardName, final int cardId) {
         this.cardName = cardName;
         this.cardId = cardId;
     }
