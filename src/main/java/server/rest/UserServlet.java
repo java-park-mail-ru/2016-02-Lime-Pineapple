@@ -6,8 +6,6 @@ import db.services.AccountService;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -21,17 +19,17 @@ import org.apache.logging.log4j.Logger;
 @Path("/user/")
 public class UserServlet extends HttpServlet {
     private AccountService accountService;
-    private final static Logger logger = LogManager.getLogger(UserServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger(UserServlet.class.toString());
 
     public UserServlet(AccountService accountService) {
         this.accountService = accountService;
-        logger.error("Initialized");
+        LOGGER.error("Initialized");
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
-        logger.error("[*] Getting users...");
+        LOGGER.error("[*] Getting users...");
         final Collection<User> allUsers = accountService.getAllUsers();
         return Response.status(Response.Status.OK).entity(allUsers.toArray(new User[allUsers.size()])).build();
     }
@@ -60,7 +58,7 @@ public class UserServlet extends HttpServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(User user, @Context HttpHeaders headers) {
+    public Response createUser(User user) {
         if (accountService.addUser(user) == 0L) {
             return Response.status(Response.Status.OK).entity(user.getLogin()).build();
         } else {

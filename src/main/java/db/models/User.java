@@ -11,14 +11,23 @@ public class User implements IValidate {
         LOGIN_INVALID,
         NICKNAME_TOO_SHORT,
         NICKNAME_INVALID,
+<<<<<<< HEAD
         PASSWORD_WEAK, //use this for raw password
     }
     private final static int
             VALIDATION_MIN_NICKNAME_LENGTH = 4,
             VALIDATION_MIN_PASSWORD_LENGTH = 5;
+=======
+        PASSWORD_WEAK,
+    }
+
+    private static final int
+            VALIDATION_MIN_NICKNAME_LENGTH = 4;
+    private static final int VALIDATION_MIN_PASSWORD_LENGTH = 5;
+>>>>>>> db407bf416d8e59ce21af9e5ea10d275d0b3a3d9
 
 
-    private final static Logger logger = LogManager.getLogger(User.class);
+    private static final Logger LOGGER = LogManager.getLogger(User.class);
     @NotNull
     private Long    id           = 0L;
     @NotNull
@@ -28,14 +37,14 @@ public class User implements IValidate {
     @NotNull
     private String nickname="";
 
-    private Integer totalScore; //total score for all games
+    private Integer totalScore;
 
     public User() {
         login = "";
         setPassword("");
         totalScore = 0;
         nickname = "";
-        logger.debug("[+] Empty instance created.");
+        LOGGER.debug("[+] Empty instance created.");
     }
 
     public User(@NotNull String login, @NotNull String password) {
@@ -43,7 +52,7 @@ public class User implements IValidate {
         setLogin(login);
         setPassword(password);
         totalScore = 0;
-        logger.debug("[+] Non-empty instance created.");
+        LOGGER.debug("[+] Non-empty instance created.");
     }
 
     @NotNull
@@ -82,14 +91,18 @@ public class User implements IValidate {
     public void increaseScore(int delta) { this.totalScore+=delta; }
     public void setScore(int score) { this.totalScore = score; }
 
-    public void Validate() {
-        if ( !this.getLogin().matches( "/.+@.+\\..+/i" ) ) //any_symbol@any_symbol.any_symbol
+    public void validate() {
+        if ( !this.login.matches( "/.+@.+\\..+/i" ) )
             throw new ValidationException("Name invalid", (long)UserValidationErrors.LOGIN_INVALID.ordinal());
+<<<<<<< HEAD
         else if ( this.getPassword().toString().length() < VALIDATION_MIN_PASSWORD_LENGTH )
+=======
+        else if ( this.password.length() < VALIDATION_MIN_PASSWORD_LENGTH )
+>>>>>>> db407bf416d8e59ce21af9e5ea10d275d0b3a3d9
             throw new ValidationException("Password is too short.", (long)UserValidationErrors.PASSWORD_WEAK.ordinal());
-        else if ( this.getNickname().length() < VALIDATION_MIN_NICKNAME_LENGTH )
+        else if ( this.nickname.length() < VALIDATION_MIN_NICKNAME_LENGTH )
             throw new ValidationException("Nickname is too short.", (long)UserValidationErrors.NICKNAME_TOO_SHORT.ordinal());
-        else if ( this.getNickname().matches("/w+/i") )
-        logger.debug("[ + ] UserData is valid");
+        else if ( this.nickname.matches("/w+/i") )
+        LOGGER.debug("[ + ] UserData is valid");
     }
 }
