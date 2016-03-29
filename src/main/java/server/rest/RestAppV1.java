@@ -8,11 +8,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
-
-
-
 // JERSEY ignores ApplicationPath
-
 
 @ApplicationPath("/api/v1/")
 public class RestAppV1 extends Application {
@@ -21,12 +17,10 @@ public class RestAppV1 extends Application {
     public Set<Object> getSingletons() {
 
         LOGGER.error("[+] Started application...");
-
         final HashSet<Object> objects = new HashSet<>();
         final AccountService accountService = new ExampleAccountService();
         objects.add(new UserServlet(accountService));
         objects.add(new SessionServlet(accountService));
-
         return objects;
     }
 }

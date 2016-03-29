@@ -1,6 +1,5 @@
 package server.rest;
 
-import db.models.game.ScoreTable;
 import db.services.AccountService;
 
 import javax.inject.Singleton;
@@ -46,15 +45,6 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    @GET
-    @Path("/totalScores")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response showScoreTable() {
-        LOGGER.error("[*] Getting scoreboard...");
-        final Collection<ScoreTable> allscores = accountService.getuserScores();
-        return Response.status(Response.Status.OK).entity(allscores.toArray(new ScoreTable[allscores.size()])).build();
-    }
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -64,5 +54,24 @@ public class UserServlet extends HttpServlet {
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+    }
+    @DELETE
+    @Path("{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeUser(@PathParam("name") String username) {
+
+        if (accountService.removeUser(username)) {
+            return Response.status(Response.Status.OK).build();
+        }
+        else return Response.status(Response.Status.FORBIDDEN).build();
+    }
+
+    @GET
+    @Path("/totalScores")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response showScoreTable() {
+        LOGGER.error("[*] Getting scoreboard...");
+        final Collection<String> allscores = accountService.getuserScores();
+        return Response.status(Response.Status.OK).entity(allscores.toString()).build();
     }
 }

@@ -1,6 +1,8 @@
 package servlets;
 
-import account.server.AccountService;
+//import account.server.AccountService;
+import db.models.User;
+import db.services.AccountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,41 +13,40 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class HomePageServlet extends HttpServlet {
-    static final Logger logger = LogManager.getLogger(HomePageServlet.class.getName());
+    static final Logger LOGGER = LogManager.getLogger(HomePageServlet.class.getName());
     public static final String PAGE_URL = "/home";
     private final AccountService accountServer;
 
     public HomePageServlet(AccountService accountServer) {
         this.accountServer = accountServer;
     }
-
+    @Override
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response) throws ServletException, IOException {
 
         response.setContentType("text/html;charset=utf-8");
 
-        String remove = request.getParameter("remove");
+        final String remove = request.getParameter("remove");
 
         if (remove != null) {
-            accountServer.removeUser();
+            accountServer.removeUser("11");
             response.getWriter().println("Hasta la vista!");
             response.setStatus(HttpServletResponse.SC_OK);
             return;
         }
 
-        int limit = accountServer.getUsersLimit();
-        int count = accountServer.getUsersCount();
+        final int limit = accountServer.getUsersLimit();
+        final int count = accountServer.getUsersCount();
 
-        logger.info("Limit: {}. Count {}", limit, count);
-
+        LOGGER.info("Limit: {}. Count {}", limit, count);
         if (limit > count) {
-            logger.info("User pass");
-            accountServer.addNewUser();
+            LOGGER.info("User pass");
+            accountServer.addUser(new User("name", "pass"));
             response.getWriter().println("Hello, world!");
             response.setStatus(HttpServletResponse.SC_OK);
         }
         else {
-            logger.info("User were rejected");
+            LOGGER.info("User were rejected");
             response.getWriter().println("Server is closed for maintenance!");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }

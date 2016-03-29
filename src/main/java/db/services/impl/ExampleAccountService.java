@@ -1,6 +1,5 @@
 package db.services.impl;
 
-import db.models.game.ScoreTable;
 import db.services.AccountService;
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
@@ -19,9 +18,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ExampleAccountService implements AccountService {
 
     private AtomicLong autoIncrementId = new AtomicLong(0L);
-    private static final Logger logger = LogManager.getLogger(ExampleAccountService.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExampleAccountService.class);
     private Map<String, User> users = new HashMap<>();
     private Map<Long, String> userids = new HashMap<>();
+    private final int userlimit = 100000;
 
 
 
@@ -45,7 +45,7 @@ public class ExampleAccountService implements AccountService {
 
         try {
             if (this.userids.containsKey(userId)) {
-                logger.error("User with this id already exists");
+                LOGGER.error("User with this id already exists");
                 return false;
             }
 
@@ -59,7 +59,7 @@ public class ExampleAccountService implements AccountService {
 
         } catch (RuntimeException e) {
 
-            logger.error("Error");
+            LOGGER.error("Error");
             return false;
         }
         
@@ -73,7 +73,7 @@ public class ExampleAccountService implements AccountService {
             return user.getId();
         }
         else {
-            logger.error("User was not registrated");
+            LOGGER.error("User was not registrated");
             return value;
         }
 
@@ -91,16 +91,39 @@ public class ExampleAccountService implements AccountService {
     }
     @Override
 
-    public Collection<ScoreTable>getuserScores() {
-        Map<Integer, ScoreTable> playerscores=new TreeMap<>();
-        Iterator<Map.Entry<String, User>>allusers=users.entrySet().iterator();
-        User current;
+    public Collection<String>getuserScores() {
+        final Map<Integer, String> playerscores=new TreeMap<>();
+        final Iterator<Map.Entry<String, User>>allusers=users.entrySet().iterator();
         while (allusers.hasNext()) {
-            current=allusers.next().getValue();
-            final ScoreTable score=new ScoreTable(current.getScore(),current.getNickname());
+            final User current=allusers.next().getValue();
+            final String score=current.getLogin() + " scored " + current.getScore().toString();
             playerscores.put(current.getScore(), score);
         }
         return playerscores.values();
     }
+    @Override
+
+    public boolean removeUser(@NotNull String username) {
+        if (users.containsKey(username)) {
+            final User removingUser = users.get(username);
+            users.remove(username);
+            userids.remove(removingUser.getId());
+            LOGGER.error("User "+username + " was deleted");
+            return true;
+        }
+        else {
+            LOGGER.error("User "+username +" not found");
+            return false;
+        }
+    }
+    @Override
+    public int getUsersLimit() {
+        return userlimit;
+    }
+    @Override
+    public int getUsersCount() {
+        return users.size();
+    }
+
 
 }
