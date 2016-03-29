@@ -102,17 +102,25 @@ public class ExampleAccountService implements AccountService {
         return playerscores.values();
     }
     @Override
-
-    public boolean removeUser(@NotNull String username) {
-        if (users.containsKey(username)) {
-            final User removingUser = users.get(username);
+    public boolean changeUser(@NotNull User user)
+    {
+        if (users.containsKey(user.getLogin())) {
+            users.put(user.getLogin(), user);
+            return true;
+        }
+        else return false;
+    }
+    @Override
+    public boolean removeUser(@NotNull Long userid) {
+        if (userids.containsKey(userid)) {
+            final String username = userids.get(userid);
             users.remove(username);
-            userids.remove(removingUser.getId());
+            userids.remove(userid);
             LOGGER.error("User "+username + " was deleted");
             return true;
         }
         else {
-            LOGGER.error("User "+username +" not found");
+            LOGGER.error("User with id "+userid +" not found");
             return false;
         }
     }
@@ -124,6 +132,7 @@ public class ExampleAccountService implements AccountService {
     public int getUsersCount() {
         return users.size();
     }
+
 
 
 }

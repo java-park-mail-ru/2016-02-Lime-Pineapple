@@ -18,8 +18,8 @@ public interface AccountService {
     User getUser(@NotNull Long userId);
     @Nullable
     User getUser(@NotNull String userName);
-    boolean removeUser(@NotNull String username);
+    boolean removeUser(@NotNull Long userid);
     int getUsersLimit();
     int getUsersCount();
-
+    boolean changeUser(@NotNull User user);
 }

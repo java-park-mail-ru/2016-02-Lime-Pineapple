@@ -29,7 +29,7 @@ public class HomePageServlet extends HttpServlet {
         final String remove = request.getParameter("remove");
 
         if (remove != null) {
-            accountServer.removeUser("11");
+            accountServer.removeUser(0L);
             response.getWriter().println("Hasta la vista!");
             response.setStatus(HttpServletResponse.SC_OK);
             return;
