@@ -11,20 +11,14 @@ public class User implements IValidate {
         LOGIN_INVALID,
         NICKNAME_TOO_SHORT,
         NICKNAME_INVALID,
-<<<<<<< HEAD
         PASSWORD_WEAK, //use this for raw password
     }
-    private final static int
-            VALIDATION_MIN_NICKNAME_LENGTH = 4,
-            VALIDATION_MIN_PASSWORD_LENGTH = 5;
-=======
-        PASSWORD_WEAK,
-    }
+
 
     private static final int
             VALIDATION_MIN_NICKNAME_LENGTH = 4;
     private static final int VALIDATION_MIN_PASSWORD_LENGTH = 5;
->>>>>>> db407bf416d8e59ce21af9e5ea10d275d0b3a3d9
+
 
 
     private static final Logger LOGGER = LogManager.getLogger(User.class);
@@ -60,8 +54,8 @@ public class User implements IValidate {
         return login;
     }
 
-    public String setLogin(@NotNull String login) {
-        return this.login = login;
+    public String setLogin(@NotNull String login1) {
+        return this.login = login1;
     }
 
     @NotNull
@@ -69,8 +63,8 @@ public class User implements IValidate {
         return this.id;
     }
 
-    public Long setId(@NotNull Long id) {
-        return this.id = id;
+    public Long setId(@NotNull Long id1) {
+        return this.id = id1;
     }
 
     @NotNull
@@ -78,8 +72,8 @@ public class User implements IValidate {
         return password;
     }
 
-    public Integer setPassword(@NotNull String password) {
-        return this.password = password.hashCode();
+    public Integer setPassword(@NotNull String password1) {
+        return this.password = password1.hashCode();
     }
 
     @NotNull
@@ -94,11 +88,7 @@ public class User implements IValidate {
     public void validate() {
         if ( !this.login.matches( "/.+@.+\\..+/i" ) )
             throw new ValidationException("Name invalid", (long)UserValidationErrors.LOGIN_INVALID.ordinal());
-<<<<<<< HEAD
         else if ( this.getPassword().toString().length() < VALIDATION_MIN_PASSWORD_LENGTH )
-=======
-        else if ( this.password.length() < VALIDATION_MIN_PASSWORD_LENGTH )
->>>>>>> db407bf416d8e59ce21af9e5ea10d275d0b3a3d9
             throw new ValidationException("Password is too short.", (long)UserValidationErrors.PASSWORD_WEAK.ordinal());
         else if ( this.nickname.length() < VALIDATION_MIN_NICKNAME_LENGTH )
             throw new ValidationException("Nickname is too short.", (long)UserValidationErrors.NICKNAME_TOO_SHORT.ordinal());

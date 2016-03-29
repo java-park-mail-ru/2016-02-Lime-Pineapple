@@ -50,7 +50,7 @@ public class UserServlet extends HttpServlet {
     @Path("/totalScores")
     @Produces(MediaType.APPLICATION_JSON)
     public Response showScoreTable() {
-        logger.error("[*] Getting scoreboard...");
+        LOGGER.error("[*] Getting scoreboard...");
         final Collection<ScoreTable> allscores = accountService.getuserScores();
         return Response.status(Response.Status.OK).entity(allscores.toArray(new ScoreTable[allscores.size()])).build();
     }
