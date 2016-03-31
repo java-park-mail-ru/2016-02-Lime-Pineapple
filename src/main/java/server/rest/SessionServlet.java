@@ -18,8 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.rest.common.Utils;
 
-
-@Singleton
 @Path("/session")
 public class SessionServlet extends HttpServlet {
     private static final String EMPTY_JSON = new JsonObject().toString();

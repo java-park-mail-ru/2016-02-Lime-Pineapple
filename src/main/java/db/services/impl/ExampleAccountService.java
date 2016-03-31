@@ -44,7 +44,7 @@ public class ExampleAccountService implements AccountService {
     public boolean addUser(@NotNull Long userId, @NotNull User user) {
 
         try {
-            if (this.userids.containsKey(userId)) {
+            if (this.users.containsKey(user.getLogin())) {
                 LOGGER.error("User with this id already exists");
                 return false;
             }
@@ -74,7 +74,7 @@ public class ExampleAccountService implements AccountService {
         }
         else {
             LOGGER.error("User was not registrated");
-            return value;
+            return 0L;
         }
 
     }

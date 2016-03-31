@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-@Singleton
 @Path("/user/")
 public class UserServlet extends HttpServlet {
     private AccountService accountService;
@@ -49,7 +48,7 @@ public class UserServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user) {
-        if (accountService.addUser(user) == 0L) {
+        if (accountService.addUser(user) != 0L) {
             return Response.status(Response.Status.OK).entity(user.getLogin()).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
