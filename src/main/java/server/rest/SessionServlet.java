@@ -42,18 +42,13 @@ public class SessionServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response checkSession(@Context HttpHeaders headers, @Context HttpServletRequest request) {
         final Long uid = getIdFromRequest(request);
-        if (uid == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        else {
-            final User realUser = this.accountService.getUser(uid);
-            if (realUser == null) {
-                return Response.status(Response.Status.OK).entity("User not found").build();
-            } else {
-                final JsonObject idJs = new JsonObject();
-                idJs.addProperty("id", 1L);
-                return Response.status(Response.Status.OK).entity(idJs.toString()).build();
-            }
+        final User realUser = this.accountService.getUser(uid);
+        if ( realUser == null ) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(EMPTY_JSON).build();
+        } else {
+            final JsonObject idJs = new JsonObject();
+            idJs.addProperty("id", 1L);
+            return Response.status(Response.Status.OK).entity(idJs.toString()).build();
         }
     }
 
@@ -79,6 +74,7 @@ public class SessionServlet extends HttpServlet {
     public Response removeSession(@Context HttpServletRequest request) {
         final HttpSession currentSession = request.getSession();
         currentSession.removeAttribute(Utils.USER_ID_KEY);
+
         return Response.status(Response.Status.OK).entity(EMPTY_JSON).build();
     }
 
