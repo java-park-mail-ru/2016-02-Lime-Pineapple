@@ -23,8 +23,6 @@ public class ExampleAccountService implements AccountService {
     private Map<Long, String> userids = new HashMap<>();
     private final int userlimit = 100000;
 
-
-
 //    private ConcurrentMap<Long, User> tableIdUsers = new ConcurrentHashMap<>();
 //    private ConcurrentMap<String, WeakReference<User>> tableNameUsers = new ConcurrentHashMap<>();
 
@@ -50,8 +48,8 @@ public class ExampleAccountService implements AccountService {
             }
 
 //    public boolean addUser(@NotNull Long userId,@NotNull User user) {
-                //       boolean idUsersTableChanged = false;
-                //       boolean nameUsersTableChanged = false;
+            //       boolean idUsersTableChanged = false;
+            //       boolean nameUsersTableChanged = false;
             else {
                 users.put(user.getLogin(), user);
                 return true;
@@ -62,7 +60,7 @@ public class ExampleAccountService implements AccountService {
             LOGGER.error("Error");
             return false;
         }
-        
+
     }
     @Override
     public Long addUser(@NotNull User user) {
@@ -111,6 +109,7 @@ public class ExampleAccountService implements AccountService {
         else return false;
     }
     @Override
+
     public boolean removeUser(@NotNull Long userid) {
         if (userids.containsKey(userid)) {
             final String username = userids.get(userid);
