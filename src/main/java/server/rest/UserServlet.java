@@ -8,7 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
-
+import java.lang.String;
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +35,7 @@ public class UserServlet extends HttpServlet {
     @GET
     @Path("{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserByName(@PathParam("name") String name) {
+    public Response getUserByName(@PathParam("name") Long name) {
         final User user = accountService.getUser(name);
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -53,5 +53,36 @@ public class UserServlet extends HttpServlet {
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+    }
+    @POST
+    @Path("{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(@PathParam("name") Long name, User user) {
+        if (accountService.changeUser(user)) {
+            return Response.status(Response.Status.OK).entity(user.getId()).build();
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+    }
+
+    @DELETE
+    @Path("{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeUser(@PathParam("name") Long username) {
+
+        if (accountService.removeUser(username)) {
+            return Response.status(Response.Status.OK).build();
+        }
+        else return Response.status(Response.Status.FORBIDDEN).build();
+    }
+
+    @GET
+    @Path("/totalScores")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response showScoreTable() {
+        LOGGER.error("[*] Getting scoreboard...");
+        final Collection<String> allscores = accountService.getuserScores();
+        return Response.status(Response.Status.OK).entity(allscores.toString()).build();
     }
 }

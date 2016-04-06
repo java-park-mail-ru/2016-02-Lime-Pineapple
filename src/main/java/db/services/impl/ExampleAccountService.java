@@ -5,7 +5,6 @@ import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.*;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +13,10 @@ import java.util.Collection;
 //import java.util.concurrent.ConcurrentHashMap;
 //import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
+import net.sf.hibernate.Session;
+import net.sf.hibernate.SessionFactory;
+import net.sf.hibernate.Transaction;
+import net.sf.hibernate.cfg.Configuration;
 
 public class ExampleAccountService implements AccountService {
 
@@ -48,8 +51,8 @@ public class ExampleAccountService implements AccountService {
             }
 
 //    public boolean addUser(@NotNull Long userId,@NotNull User user) {
-            //       boolean idUsersTableChanged = false;
-            //       boolean nameUsersTableChanged = false;
+                //       boolean idUsersTableChanged = false;
+                //       boolean nameUsersTableChanged = false;
             else {
                 users.put(user.getLogin(), user);
                 return true;
@@ -60,7 +63,7 @@ public class ExampleAccountService implements AccountService {
             LOGGER.error("Error");
             return false;
         }
-
+        
     }
     @Override
     public Long addUser(@NotNull User user) {
@@ -109,7 +112,6 @@ public class ExampleAccountService implements AccountService {
         else return false;
     }
     @Override
-
     public boolean removeUser(@NotNull Long userid) {
         if (userids.containsKey(userid)) {
             final String username = userids.get(userid);
@@ -131,7 +133,10 @@ public class ExampleAccountService implements AccountService {
     public int getUsersCount() {
         return users.size();
     }
+    protected int loadUsersFromDatabase() {
 
 
+        return 1;
+    }
 
 }
