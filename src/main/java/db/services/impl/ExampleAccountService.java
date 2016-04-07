@@ -34,7 +34,15 @@ public class ExampleAccountService implements AccountService {
 
     public ExampleAccountService() {
         try {
-            sessionFactory = new Configuration().addClass(User.class).buildSessionFactory();
+            final Configuration config=new Configuration();
+            config.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+            config.setProperty("hibernate.connection.drivet_class", "com.mysql.jdbc.Driver");
+            config.setProperty("hibernate.connection.url","jdbc:mysql://localhost/WHACKAMOLEUSERS");
+            config.setProperty("hibernate.connection.username", "root");
+            config.setProperty("hibernate.connection.password", "yyvt9z3e");
+            config.setProperty("hibernate.show_sql", "true");
+            config.setProperty("hibernate.hbm2dll", "update");
+            sessionFactory = config.addClass(User.class).buildSessionFactory();
         }
         catch (HibernateException e) {
             LOGGER.error("Erroe connecting to database");
