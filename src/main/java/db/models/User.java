@@ -5,7 +5,10 @@ import db.models.validation.ValidationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import javax.persistence.*;
 
+@Entity
+@Table (name="USERS")
 public class User implements IValidate {
     private enum UserValidationErrors {
         LOGIN_INVALID,
@@ -13,22 +16,26 @@ public class User implements IValidate {
         NICKNAME_INVALID,
         PASSWORD_WEAK, //use this for raw password
     }
-
-
     private static final int
             VALIDATION_MIN_NICKNAME_LENGTH = 4;
     private static final int VALIDATION_MIN_PASSWORD_LENGTH = 5;
-
     private static final Logger LOGGER = LogManager.getLogger(User.class);
+
     @NotNull
+    @Id
+    @Column(name="ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long    id           = 0L;
     @NotNull
+    @Column(name="LOGIN")
     private String  login        = "";
     @NotNull
-    private Integer  password     = 0;
+    @Column(name="PASSWORD")
+    private String  password     = "";
     @NotNull
+    @Column(name="NICKNAME")
     private String nickname="";
-
+    @Column(name="TOTALSCORE")
     private Integer totalScore;
 
     public User() {
@@ -66,12 +73,12 @@ public class User implements IValidate {
     }
 
     @NotNull
-    public Integer getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public Integer setPassword(@NotNull String password1) {
-        return this.password = password1.hashCode();
+    public String setPassword(@NotNull String password1) {
+        return this.password = password1;
     }
 
     @NotNull
@@ -86,7 +93,7 @@ public class User implements IValidate {
     public void validate() {
         if ( !this.login.matches( "/.+@.+\\..+/i" ) )
             throw new ValidationException("Name invalid", (long)UserValidationErrors.LOGIN_INVALID.ordinal());
-        else if ( this.getPassword().toString().length() < VALIDATION_MIN_PASSWORD_LENGTH )
+        else if ( this.getPassword().length() < VALIDATION_MIN_PASSWORD_LENGTH )
             throw new ValidationException("Password is too short.", (long)UserValidationErrors.PASSWORD_WEAK.ordinal());
         else if ( this.nickname.length() < VALIDATION_MIN_NICKNAME_LENGTH )
             throw new ValidationException("Nickname is too short.", (long)UserValidationErrors.NICKNAME_TOO_SHORT.ordinal());

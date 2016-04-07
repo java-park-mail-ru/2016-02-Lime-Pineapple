@@ -48,11 +48,13 @@ public class UserServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user) {
+
         if (accountService.addUser(user) != 0L) {
             return Response.status(Response.Status.OK).entity(user.getLogin()).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+
     }
     @POST
     @Path("{name}")

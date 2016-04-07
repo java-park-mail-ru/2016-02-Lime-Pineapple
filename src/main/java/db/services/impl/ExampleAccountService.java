@@ -2,8 +2,12 @@ package db.services.impl;
 
 import db.services.AccountService;
 import db.models.User;
+import net.sf.hibernate.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+//import java.io.Serializable;
+//import java.sql.Connection;
 import java.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,10 +17,11 @@ import java.util.Collection;
 //import java.util.concurrent.ConcurrentHashMap;
 //import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
-import net.sf.hibernate.Session;
-import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.Transaction;
+
 import net.sf.hibernate.cfg.Configuration;
+
+//import javax.naming.NamingException;
+//import javax.naming.Reference;
 
 public class ExampleAccountService implements AccountService {
 
@@ -25,17 +30,23 @@ public class ExampleAccountService implements AccountService {
     private Map<String, User> users = new HashMap<>();
     private Map<Long, String> userids = new HashMap<>();
     private final int userlimit = 100000;
-
-//    private ConcurrentMap<Long, User> tableIdUsers = new ConcurrentHashMap<>();
-//    private ConcurrentMap<String, WeakReference<User>> tableNameUsers = new ConcurrentHashMap<>();
-
+    private SessionFactory sessionFactory;
 
     public ExampleAccountService() {
-        addUser(new User("admin@admin.ru", "admin"));
-        addUser(new User("guest@mail.ru", "12345"));
-        users.get("admin@admin.ru").increaseScore(10);
+        try {
+            sessionFactory = new Configuration().addClass(User.class).buildSessionFactory();
+        }
+        catch (HibernateException e) {
+            LOGGER.error("Erroe connecting to database");
+            sessionFactory=null;
+        }
+        if (loadUsersFromDatabase()==0) {
+            addUser(new User("admin@admin.ru", "admin"));
+            addUser(new User("guest@mail.ru", "12345"));
+            users.get("admin@admin.ru").increaseScore(10);
+        }
+        else LOGGER.error("User database loaded successfully");
     }
-
     @Override
     public Collection<User> getAllUsers() {
         return users.values();
@@ -49,10 +60,6 @@ public class ExampleAccountService implements AccountService {
                 LOGGER.error("User with this id already exists");
                 return false;
             }
-
-//    public boolean addUser(@NotNull Long userId,@NotNull User user) {
-                //       boolean idUsersTableChanged = false;
-                //       boolean nameUsersTableChanged = false;
             else {
                 users.put(user.getLogin(), user);
                 return true;
@@ -71,6 +78,13 @@ public class ExampleAccountService implements AccountService {
         user.setId(value);
         if (this.addUser(value, user)) {
             userids.put(value, user.getLogin());
+            try {
+                if (saveUserToDatabase(user)) LOGGER.error("User added to database");
+                else LOGGER.error("Failedtosaveuser");
+            }
+            catch (HibernateException e) {
+                LOGGER.error("Failedtosaveuser");
+            }
             return user.getId();
         }
         else {
@@ -80,7 +94,6 @@ public class ExampleAccountService implements AccountService {
 
     }
     @Nullable @Override
-
     public User getUser(@NotNull Long userId) {
 
         return this.users.get(userids.get(userId));
@@ -135,8 +148,52 @@ public class ExampleAccountService implements AccountService {
     }
     protected int loadUsersFromDatabase() {
 
+        try {
+            final List<User> usertable=getAll();
+            if (usertable!=null) {
+                while (usertable.iterator().hasNext()) {
+                    final User user = usertable.iterator().next();
+                    userids.put(user.getId(), user.getLogin());
+                    users.put(user.getLogin(), user);
+                }
+                LOGGER.error("Userbase loaded");
+                return 1;
+            }
+            else {
+                LOGGER.error("Failed loading users");
+                return 0;
+            }
+        }
+        catch (HibernateException e){
+            LOGGER.error("Failed loading users");
+            return 0;
+        }
 
-        return 1;
+    }
+    protected boolean saveUserToDatabase(User user) throws HibernateException {
+
+       if (sessionFactory!=null) {
+            final Session saving = sessionFactory.openSession();
+            final Transaction trans = saving.beginTransaction();
+            saving.save(user);
+            trans.commit();
+            saving.close();
+            return true;
+        }
+        else return false;
+    }
+    @Nullable
+    protected List<User> getAll() throws HibernateException {
+
+        if (sessionFactory!=null) {
+
+            final Session loading = sessionFactory.openSession();
+            final Criteria read = loading.createCriteria(User.class);
+            return read.list();
+        }
+        else {
+            return null;
+        }
     }
 
 }

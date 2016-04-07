@@ -87,6 +87,9 @@
     <orderEntry type="library" name="net.sf.m-m-m:mmm-transaction-impl-spring:1.0.0" level="project" />
     <orderEntry type="library" name="net.sf.hibernate:hibernate:2.1.7c" level="project" />
     <orderEntry type="library" name="mysql:mysql-connector-mxj:5.0.12" level="project" />
+    <orderEntry type="library" name="org.hibernate:hibernate:3.2.7.ga" level="project" />
+    <orderEntry type="library" name="org.hibernate:hibernate-core:5.0.3.Final" level="project" />
+    <orderEntry type="library" name="mysql:mysql-connector-java:5.1.35" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
