@@ -1,27 +1,21 @@
 package db.services.impl;
 
+import db.models.validation.ValidationException;
 import db.services.AccountService;
 import db.models.User;
 import net.sf.hibernate.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 //import java.io.Serializable;
 //import java.sql.Connection;
 import java.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 //import java.lang.ref.WeakReference;
 import java.util.Collection;
-//import java.util.concurrent.ConcurrentHashMap;
-//import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import net.sf.hibernate.cfg.Configuration;
-
-//import javax.naming.NamingException;
-//import javax.naming.Reference;
 
 public class ExampleAccountService implements AccountService {
 
@@ -49,9 +43,14 @@ public class ExampleAccountService implements AccountService {
             sessionFactory=null;
         }
         if (loadUsersFromDatabase()==0) {
-            addUser(new User("admin@admin.ru", "admin"));
-            addUser(new User("guest@mail.ru", "12345"));
-            users.get("admin@admin.ru").increaseScore(10);
+            try {
+                addUser(new User("admin@admin.ru", "admin"));
+                addUser(new User("guest@mail.ru", "12345"));
+                users.get("admin@admin.ru").increaseScore(10);
+            }
+            catch (ValidationException e) {
+                LOGGER.error(e.getMessage());
+            }
         }
         else LOGGER.error("User database loaded successfully");
     }
@@ -65,11 +64,19 @@ public class ExampleAccountService implements AccountService {
 
         try {
             if (this.users.containsKey(user.getLogin())) {
-                LOGGER.error("User with this id already exists");
+                LOGGER.error("User with this name already exists");
                 return false;
             }
             else {
-                users.put(user.getLogin(), user);
+                try {
+                    final User newUser = new User(user.getLogin(), user.getPassword());
+                    newUser.setId(userId);
+                    users.put(user.getLogin(), newUser);
+                }
+                catch (ValidationException e) {
+                    LOGGER.error("Invalid data");
+                }
+                //users.put(user.getLogin(), user);
                 return true;
             }
 
@@ -127,8 +134,18 @@ public class ExampleAccountService implements AccountService {
     public boolean changeUser(@NotNull User user)
     {
         if (users.containsKey(user.getLogin())) {
-            users.put(user.getLogin(), user);
-            return true;
+            try {
+                final User updatingUser = users.get(user.getLogin());
+                updatingUser.setPassword(user.getPassword());
+                updatingUser.setNickname(user.getNickname());
+                users.put(user.getLogin(), updatingUser);
+                LOGGER.error("User was updated");
+                return true;
+            }
+            catch (ValidationException e) {
+                LOGGER.error("User was not updated");
+                return false;
+            }
         }
         else return false;
     }
