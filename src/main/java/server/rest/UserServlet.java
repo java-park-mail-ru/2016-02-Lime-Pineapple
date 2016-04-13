@@ -1,8 +1,6 @@
 package server.rest;
 
 import db.services.AccountService;
-
-import javax.inject.Singleton;
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -12,7 +10,6 @@ import java.lang.String;
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 @Path("/user/")
 public class UserServlet extends HttpServlet {
@@ -27,7 +24,7 @@ public class UserServlet extends HttpServlet {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
-        LOGGER.error("[*] Getting users...");
+        LOGGER.debug("[*] Getting users...");
         final Collection<User> allUsers = accountService.getAllUsers();
         return Response.status(Response.Status.OK).entity(allUsers.toArray(new User[allUsers.size()])).build();
     }
@@ -35,7 +32,7 @@ public class UserServlet extends HttpServlet {
     @GET
     @Path("{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserByName(@PathParam("name") Long name) {
+    public Response getUserById(@PathParam("name") Long name) {
         final User user = accountService.getUser(name);
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -49,7 +46,7 @@ public class UserServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user) {
 
-        if (accountService.addUser(user) != 0L) {
+        if (accountService.addUser(user)) {
             return Response.status(Response.Status.OK).entity(user.getLogin()).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -83,8 +80,8 @@ public class UserServlet extends HttpServlet {
     @Path("/totalScores")
     @Produces(MediaType.APPLICATION_JSON)
     public Response showScoreTable() {
-        LOGGER.error("[*] Getting scoreboard...");
-        final Collection<String> allscores = accountService.getuserScores();
+        LOGGER.debug("[*] Getting scoreboard...");
+        final Collection<String> allscores = accountService.getUserScores();
         return Response.status(Response.Status.OK).entity(allscores.toString()).build();
     }
 }

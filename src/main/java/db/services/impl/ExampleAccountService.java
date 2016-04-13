@@ -6,12 +6,10 @@ import db.models.User;
 import net.sf.hibernate.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-//import java.io.Serializable;
 //import java.sql.Connection;
 import java.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-//import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -45,14 +43,14 @@ public class ExampleAccountService implements AccountService {
         if (loadUsersFromDatabase()==0) {
             try {
                 addUser(new User("admin@admin.ru", "admin"));
-                addUser(new User("guest@mail.ru", "12345"));
                 users.get("admin@admin.ru").increaseScore(10);
+                addUser(new User("guest@mail.ru", "5"));
             }
             catch (ValidationException e) {
                 LOGGER.error(e.getMessage());
             }
         }
-        else LOGGER.error("User database loaded successfully");
+        else LOGGER.info("User database loaded successfully");
     }
     @Override
     public Collection<User> getAllUsers() {
@@ -76,7 +74,6 @@ public class ExampleAccountService implements AccountService {
                 catch (ValidationException e) {
                     LOGGER.error("Invalid data");
                 }
-                //users.put(user.getLogin(), user);
                 return true;
             }
 
@@ -88,23 +85,23 @@ public class ExampleAccountService implements AccountService {
         
     }
     @Override
-    public Long addUser(@NotNull User user) {
+    public boolean addUser(@NotNull User user) {
         final Long value = this.autoIncrementId.incrementAndGet();
         user.setId(value);
         if (this.addUser(value, user)) {
             userids.put(value, user.getLogin());
             try {
-                if (saveUserToDatabase(user)) LOGGER.error("User added to database");
+                if (saveUserToDatabase(user)) LOGGER.info("User added to database");
                 else LOGGER.error("Failedtosaveuser");
             }
             catch (HibernateException e) {
                 LOGGER.error("Failedtosaveuser");
             }
-            return user.getId();
+            return true;
         }
         else {
             LOGGER.error("User was not registrated");
-            return 0L;
+            return false;
         }
 
     }
@@ -119,8 +116,7 @@ public class ExampleAccountService implements AccountService {
         return this.users.get(userName);
     }
     @Override
-
-    public Collection<String>getuserScores() {
+    public Collection<String>getUserScores() {
         final Map<Integer, String> playerscores=new TreeMap<>();
         final Iterator<Map.Entry<String, User>>allusers=users.entrySet().iterator();
         while (allusers.hasNext()) {

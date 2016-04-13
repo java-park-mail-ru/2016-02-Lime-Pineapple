@@ -2,7 +2,6 @@ package server.rest;
 
 import com.google.gson.JsonObject;
 import db.services.AccountService;
-import javax.inject.Singleton;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

@@ -14,8 +14,6 @@ public class User  {
         NICKNAME_TOO_SHORT,
         NICKNAME_INVALID,
         PASSWORD_WEAK, //use this for raw password
-        EMPTY_PASSWORD,
-        EMPTY_LOGIN,
         FORBIDDEN_NICKNAME
     }
     private static final int
@@ -50,8 +48,14 @@ public class User  {
 
     public User(@NotNull String login, @NotNull String password) throws ValidationException {
 
-        setLogin(login);
-        setPassword(password);
+        final String loginStatus=setLogin(login);
+        if (!loginStatus.equals("OK")) {
+            throw new ValidationException(loginStatus, (long)UserValidationErrors.LOGIN_INVALID.ordinal());
+        }
+        final String passwordStatus=setPassword(password);
+        if (!passwordStatus.equals("OK")) {
+            throw new ValidationException(passwordStatus, (long)UserValidationErrors.PASSWORD_WEAK.ordinal());
+        }
         totalScore = 0;
         LOGGER.debug("[+] Non-empty instance created.");
     }
@@ -60,16 +64,16 @@ public class User  {
     public String getLogin() {
         return login;
     }
-    public String setLogin(@NotNull String login1) throws ValidationException{
-        try {validatevalue("Login", login1);
+    public String setLogin(@NotNull String login1) {
+        final String validationResult=validateValue("Login", login1);
+        if (validationResult.equals("OK")) {
             this.login=login1;
         }
-        catch (ValidationException e) {
-            if (this.login.isEmpty()) LOGGER.error(e.getMessage());
-            else LOGGER.error("Login not changed" +e.getMessage());
-            throw e;
+        else {
+            if (this.login.isEmpty()) LOGGER.error(validationResult);
+            else LOGGER.error("Login not changed" +validationResult);
         }
-        return this.login;
+        return validationResult;
     }
 
     @NotNull
@@ -86,30 +90,34 @@ public class User  {
         return password;
     }
 
-    public String setPassword(@NotNull String password1) throws ValidationException {
+    public String setPassword(@NotNull String password1) {
 
-        try {
-            validatevalue("Password", password1);
+        final String validationResult=validateValue("Password", password1);
+        if (validationResult.equals("OK")) {
             this.password=password1;
         }
-        catch (ValidationException e) {
-            if (this.password.isEmpty()) LOGGER.error(e.getMessage());
-            else LOGGER.error("Password not changed" +e.getMessage());
-            throw e;
+        else {
+            if (this.password.isEmpty()) LOGGER.error(validationResult);
+            else LOGGER.error("Password not changed" +validationResult);
         }
-        return this.password;
+        return validationResult;
     }
 
     @NotNull
-    public String getNickname() { return nickname; }
+    public String getNickname() {
+        if (!nickname.isEmpty()) return nickname;
+        else return login;
+    }
     public void setNickname(@NotNull String nickname) throws ValidationException{
-        try {validatevalue("Nickname", nickname);
+
+        final String validationResult=validateValue("Nickname", nickname);
+        if (validationResult.equals("OK")) {
             this.nickname=nickname;
         }
-        catch (ValidationException e) {
-            if (this.nickname.isEmpty()) LOGGER.error("Nickname not set"+e.getMessage());
-            else LOGGER.error("Nickname not changed" +e.getMessage());
-            throw e;
+        else {
+            if (this.nickname.isEmpty()) LOGGER.error("Nickname not set"+validationResult);
+            else LOGGER.error("Nickname not changed" +validationResult);
+            throw new ValidationException("Error changing nickname", (long)UserValidationErrors.NICKNAME_INVALID.ordinal());
         }
     }
 
@@ -117,28 +125,27 @@ public class User  {
     public Integer getScore() { return this.totalScore; }
     public void increaseScore(int delta) { this.totalScore+=delta; }
 
-    private void validatevalue(String field, String value) throws ValidationException{
+    private String validateValue(String field, String value) {
         if (field.equals("Login")) {
             if (value.isEmpty())
-                throw new ValidationException("Name invalid", (long) UserValidationErrors.LOGIN_INVALID.ordinal());
+                return "Login invalid";
         }
         else if (field.equals("Password") && !value.isEmpty()) {
             if (value.length()<VALIDATION_MIN_PASSWORD_LENGTH)
-                throw new ValidationException("Password is too short.", (long)UserValidationErrors.PASSWORD_WEAK.ordinal());
+                return "Password is too short.";
         }
         else if (field.equals("Password") && value.isEmpty()) {
-            throw new ValidationException("Password is Empty.", (long)UserValidationErrors.EMPTY_PASSWORD.ordinal());
+            return "Password is Empty.";
         }
         else if (field.equals("Nickname")) {
             if (value.length() < VALIDATION_MIN_NICKNAME_LENGTH && !value.isEmpty())
-                throw new ValidationException("Nickname is too short.", (long)UserValidationErrors.NICKNAME_TOO_SHORT.ordinal());
+                return "Nickname is too short.";
             else if (value.matches("fuck") || value.matches("shit") || value.matches("ass") || value.matches("Hitler") || value.matches("porn") || value.matches("dick")) {
-                throw new ValidationException("Such nicknames are forbidden.", (long)UserValidationErrors.FORBIDDEN_NICKNAME.ordinal());
+                return "Such nicknames are forbidden.";
             }
-
         }
-
         LOGGER.debug("[ + ] UserData is valid");
+        return "OK";
     }
 
 }

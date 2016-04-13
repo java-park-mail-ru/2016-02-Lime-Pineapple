@@ -18,12 +18,12 @@ public class RestAppV1 extends Application {
     public RestAppV1() {
         objects = new HashSet<>();
         accountService = new ExampleAccountService();
-        LOGGER.error("AccountService Initialized");
+        LOGGER.info("AccountService Initialized");
     }
     @Override
     public Set<Object> getSingletons() {
 
-        LOGGER.error("[+] Started application...");
+        LOGGER.debug("[+] Started application...");
         objects.add(new UserServlet(accountService));
         objects.add(new SessionServlet(accountService));
         return objects;
