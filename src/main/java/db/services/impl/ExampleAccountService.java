@@ -37,7 +37,7 @@ public class ExampleAccountService implements AccountService {
             sessionFactory = config.addClass(User.class).buildSessionFactory();
         }
         catch (HibernateException e) {
-            LOGGER.error("Erroe connecting to database");
+            LOGGER.fatal("Error connecting to database");
             sessionFactory=null;
         }
         if (loadUsersFromDatabase()==0) {
