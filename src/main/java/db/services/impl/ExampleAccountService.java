@@ -21,23 +21,19 @@ public class ExampleAccountService implements AccountService {
     private static final Logger LOGGER = LogManager.getLogger(ExampleAccountService.class);
     private Map<String, User> users = new HashMap<>();
     private Map<Long, String> userids = new HashMap<>();
-    private final int userlimit = 100000;
+    private static final int USERLIMIT = 100000;
     private SessionFactory sessionFactory;
 
     public ExampleAccountService() {
         try {
-            final Configuration config=new Configuration();
-            config.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-            config.setProperty("hibernate.connection.drivet_class", "com.mysql.jdbc.Driver");
-            config.setProperty("hibernate.connection.url","jdbc:mysql://localhost/WHACKAMOLEUSERS");
-            config.setProperty("hibernate.connection.username", "root");
-            config.setProperty("hibernate.connection.password", "yyvt9z3e");
-            config.setProperty("hibernate.show_sql", "true");
-            config.setProperty("hibernate.hbm2dll", "update");
-            sessionFactory = config.addClass(User.class).buildSessionFactory();
+            connectToDatabase();
         }
-        catch (HibernateException e) {
-            LOGGER.fatal("Error connecting to database");
+        catch (MappingException e) {
+            LOGGER.fatal("Error connecting to database"+e.getMessage());
+            sessionFactory=null;
+        }
+        catch (HibernateException e1) {
+            LOGGER.fatal("Error reading database"+e1.getMessage());
             sessionFactory=null;
         }
         if (loadUsersFromDatabase()==0) {
@@ -135,7 +131,7 @@ public class ExampleAccountService implements AccountService {
                 updatingUser.setPassword(user.getPassword());
                 updatingUser.setNickname(user.getNickname());
                 users.put(user.getLogin(), updatingUser);
-                LOGGER.error("User was updated");
+                LOGGER.info("User was updated");
                 return true;
             }
             catch (ValidationException e) {
@@ -151,7 +147,7 @@ public class ExampleAccountService implements AccountService {
             final String username = userids.get(userid);
             users.remove(username);
             userids.remove(userid);
-            LOGGER.error("User "+username + " was deleted");
+            LOGGER.info("User "+username + " was deleted");
             return true;
         }
         else {
@@ -161,12 +157,15 @@ public class ExampleAccountService implements AccountService {
     }
     @Override
     public int getUsersLimit() {
-        return userlimit;
+        return USERLIMIT;
     }
     @Override
     public int getUsersCount() {
         return users.size();
     }
+
+
+
     protected int loadUsersFromDatabase() {
 
         try {
@@ -215,6 +214,17 @@ public class ExampleAccountService implements AccountService {
         else {
             return null;
         }
+    }
+    private void connectToDatabase() throws MappingException, HibernateException{
+        final Configuration config=new Configuration();
+        config.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+        config.setProperty("hibernate.connection.drivet_class", "com.mysql.jdbc.Driver");
+        config.setProperty("hibernate.connection.url","jdbc:mysql://localhost/WHACKAMOLEUSERS");
+        config.setProperty("hibernate.connection.username", "root");
+        config.setProperty("hibernate.connection.password", "yyvt9z3e");
+        config.setProperty("hibernate.show_sql", "true");
+        config.setProperty("hibernate.hbm2dll", "update");
+        sessionFactory = config.addClass(User.class).buildSessionFactory();
     }
 
 }
