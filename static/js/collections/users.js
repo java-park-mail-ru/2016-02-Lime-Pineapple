@@ -1,3 +1,6 @@
+/**
+ * Created by leegheid on 28.03.16.
+ */
 define([
     'underscore',
     'backbone',
@@ -14,7 +17,7 @@ define([
         url :  Settings.getActiveServerUrl() + "/api/user/",
         model : User,
         comparator: function(val) {
-            return -val.get("score");
+            return -val.get("id");
         }
 
     });

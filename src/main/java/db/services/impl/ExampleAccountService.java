@@ -224,7 +224,21 @@ public class ExampleAccountService implements AccountService {
         config.setProperty("hibernate.connection.password", "yyvt9z3e");
         config.setProperty("hibernate.show_sql", "true");
         config.setProperty("hibernate.hbm2dll", "update");
+        config.addResource("/src/main/java/db/models/User.hbm.xml", User.class.getClassLoader());
         sessionFactory = config.addClass(User.class).buildSessionFactory();
+    }
+    @Override
+    public boolean testConnect() {
+        try {
+            connectToDatabase();
+            return true;
+        }
+        catch (MappingException e) {
+            return false;
+        }
+        catch (HibernateException e) {
+            return false;
+        }
     }
 
 }

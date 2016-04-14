@@ -5,7 +5,8 @@ require.config({
     paths: {
         jquery: "lib/jquery",
         underscore: "lib/underscore",
-        backbone: "lib/backbone"
+        backbone: "lib/backbone",
+        qunit: '../tests/qunit'
     },
     shim: {
         'backbone': {
@@ -19,10 +20,14 @@ require.config({
 });
 
 var tests = [
-    'models/score.test'
+    'models/score.test',
+    'models/session.test'
+], deps = [
+    'qunit'
 ];
 
-require(tests, function () {
+
+require(tests.concat(deps), function () {
     QUnit.load();
     QUnit.start();
 });

@@ -3,6 +3,8 @@ package db.services;
 
 import db.models.User;
 
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.MappingException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,4 +24,5 @@ public interface AccountService {
     int getUsersLimit();
     int getUsersCount();
     boolean changeUser(@NotNull User user);
+    boolean testConnect() throws MappingException, HibernateException;
 }

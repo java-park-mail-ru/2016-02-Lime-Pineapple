@@ -1,5 +1,249 @@
-/* TODO */
-#error, #success
-{
-    display: none;
+@charset "UTF-8";
+@font-face {
+  font-family: "cookiesMilk";
+  src: url("/fonts/cookiesmilk-Regular.ttf");
+}
+@font-face {
+  font-family: "orangeJuice";
+  src: url("/fonts/orangeJuice-20.ttf");
+  /* Путь к файлу со шрифтом */
+}
+/* line 5, ../scss/main.scss */
+html {
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+/* line 11, ../scss/main.scss */
+body {
+  width: 100%;
+  height: calc(100vh - 100vh/6);
+  margin: 0;
+  background: url("/static/clearmain.png") no-repeat fixed left;
+  background-size: 100vw 100%;
+}
+
+/* line 19, ../scss/main.scss */
+#page {
+  height: calc(100vh - 100vh/6);
+  width: 100%;
+}
+
+/* line 24, ../scss/main.scss */
+#page__view-holder {
+  height: calc(100vh - 200vh/6);
+  width: 100%;
+}
+
+/* line 30, ../scss/main.scss */
+mytag {
+  height: calc(100vh - 100vh/6);
+  width: 100vw;
+}
+
+/* line 35, ../scss/main.scss */
+#game_window {
+  height: calc(100vh - 100vh/6 - 3px);
+  width: 100vw;
+}
+
+/* line 41, ../scss/main.scss */
+#page__site-header {
+  font-family: "orangeJuice", "Century Gothic", sans-serif;
+  color: #63223E;
+  font-size: 13vmin;
+  margin: 16.66666667vh 0 0 0;
+  min-height: 16.66666667vh;
+  line-height: 16.66666667vh;
+  overflow: hidden;
+  white-space: nowrap;
+  /* When title needs to be at the top*/
+}
+/* line 51, ../scss/main.scss */
+#page__site-header.topped {
+  margin-top: 0;
+  font-size: 9.75vmin;
+}
+/* line 55, ../scss/main.scss */
+#page__site-header span {
+  transform-origin: center bottom;
+  position: relative;
+}
+@media (max-width: 767px) {
+  /* line 55, ../scss/main.scss */
+  #page__site-header span {
+    font-size: 1.15em;
+  }
+}
+@media (max-width: 563px) {
+  /* line 55, ../scss/main.scss */
+  #page__site-header span {
+    font-size: 1.15em;
+  }
+}
+
+/* line 69, ../scss/main.scss */
+.menu__row {
+  display: block;
+}
+
+/* line 76, ../scss/main.scss */
+.btn-circle {
+  display: inline-block;
+  margin: 0 1vw;
+  box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.3);
+  font-family: "cookiesMilk", "Century Gothic", sans-serif;
+  border: none;
+  color: white;
+  background-color: #63323E;
+  opacity: 0.85;
+}
+/* line 95, ../scss/main.scss */
+.btn-circle.btn-xl {
+  width: 16.66666667vh;
+  height: 16.66666667vh;
+  line-height: 16.66666667vh;
+  font-size: 6.5vh;
+  border-radius: 50%;
+  margin-top: 1vh;
+  padding: 0.52083333vh 0;
+}
+/* line 99, ../scss/main.scss */
+.btn-circle.btn-lg {
+  width: 11.66666667vh;
+  height: 11.66666667vh;
+  line-height: 11.66666667vh;
+  font-size: 4.875vh;
+  border-radius: 50%;
+  margin-top: 1vh;
+  padding: 1.04166667vh 0;
+}
+/* line 103, ../scss/main.scss */
+.btn-circle.btn-lg.btn-lg-success:hover {
+  background: #00ff80;
+}
+/* line 109, ../scss/main.scss */
+.btn-circle.btn-lg.btn-lg-back:hover {
+  background: #ff0000;
+}
+/* line 115, ../scss/main.scss */
+.btn-circle:hover {
+  background: #3cb0fd;
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* line 126, ../scss/main.scss */
+.font-ink {
+  font-family: "orangeJuice", "Century Gothic", sans-serif;
+}
+
+/* line 134, ../scss/main.scss */
+.char22 {
+  z-index: -22;
+  -moz-transform: rotate(-20deg);
+  -ms-transform: rotate(-20deg);
+  -webkit-transform: rotate(-20deg);
+  transform: rotate(-20deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char23 {
+  z-index: -23;
+  -moz-transform: rotate(-15deg);
+  -ms-transform: rotate(-15deg);
+  -webkit-transform: rotate(-15deg);
+  transform: rotate(-15deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char24 {
+  z-index: -24;
+  -moz-transform: rotate(-10deg);
+  -ms-transform: rotate(-10deg);
+  -webkit-transform: rotate(-10deg);
+  transform: rotate(-10deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char25 {
+  z-index: -25;
+  -moz-transform: rotate(-5deg);
+  -ms-transform: rotate(-5deg);
+  -webkit-transform: rotate(-5deg);
+  transform: rotate(-5deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char26 {
+  z-index: -26;
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char27 {
+  z-index: -27;
+  -moz-transform: rotate(5deg);
+  -ms-transform: rotate(5deg);
+  -webkit-transform: rotate(5deg);
+  transform: rotate(5deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char28 {
+  z-index: -28;
+  -moz-transform: rotate(10deg);
+  -ms-transform: rotate(10deg);
+  -webkit-transform: rotate(10deg);
+  transform: rotate(10deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char29 {
+  z-index: -29;
+  -moz-transform: rotate(15deg);
+  -ms-transform: rotate(15deg);
+  -webkit-transform: rotate(15deg);
+  transform: rotate(15deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char30 {
+  z-index: -30;
+  -moz-transform: rotate(20deg);
+  -ms-transform: rotate(20deg);
+  -webkit-transform: rotate(20deg);
+  transform: rotate(20deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char31 {
+  z-index: -31;
+  -moz-transform: rotate(25deg);
+  -ms-transform: rotate(25deg);
+  -webkit-transform: rotate(25deg);
+  transform: rotate(25deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char32 {
+  z-index: -32;
+  -moz-transform: rotate(30deg);
+  -ms-transform: rotate(30deg);
+  -webkit-transform: rotate(30deg);
+  transform: rotate(30deg);
+}
+
+/* line 134, ../scss/main.scss */
+.char33 {
+  z-index: -33;
+  -moz-transform: rotate(35deg);
+  -ms-transform: rotate(35deg);
+  -webkit-transform: rotate(35deg);
+  transform: rotate(35deg);
 }

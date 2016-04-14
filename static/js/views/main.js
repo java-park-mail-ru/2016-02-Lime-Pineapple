@@ -1,46 +1,35 @@
+'use strict';
 define([
     'jquery',
     'underscore',
     'backbone',
+    'settings',
+    './baseView',
     'tmpl/main_page'
-], function(
-    $,
-    _,
-    Backbone,
-    tmpl
-){
-    return Backbone.View.extend({
-        className: "view__main",
+], function( $, _, Backbone, Settings, BaseView, tmpl ){
+    var Main = BaseView.extend({
         template: tmpl,
-        //el: $(".view__main"), // DOM элемент widget'а
+
+        subscriptions: [
+            'loginSuccess'
+        ],
+
+        events: {
+                'click #start': 'navigate',
+                'click #scoreboard': 'navigate',
+                'click #login': 'navigate'
+        },
 
         initialize: function () {
+            Backbone.on("changeLoginToLogout", function () {
+                $("#login").text("Logout");
+                $("#login").attr('href', "#logout");
+            });
         },
-
-        show: function () {
-            console.log("main.show()");
-            this.$el.show();
-            console.log(this.$el);
-        },
-
-        //remove: function() {
-        //    this.$el.empty().off(); /* off to unbind the events */
-        //    this.stopListening();
-        //    return this;
-        //},
-
-        hide: function () {
-            //this.remove();
-            this.$el.hide();
-        },
-
-        render: function () {
-            //this.$el.appendTo($("#view__holder"));
-            console.log("main.show.render()");
-            this.$el.html(this.template({}));
-
-
-            return this;
+        navigate: function (e) {
+            Backbone.history.navigate($(e.target).attr("href"), true);
         }
     });
-});
+        return new Main();
+    }
+);

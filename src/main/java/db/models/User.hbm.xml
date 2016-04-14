@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping
+        PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+    <class name="User"
+           table="USERS">
+        <id name="id" type="Long"
+            unsaved-value="0L">
+            <column name="ID" sql-type="integer"
+                    not-null="true"/>
+            <generator class="uuid.hex"/>
+        </id>
+        <property name="login">
+            <column name="LOGIN" sql-type="char(255)"
+                    not-null="true"/>
+        </property>
+        <property name="password">
+            <column name="PASSWORD" sql-type="char(255)"
+                    not-null="true"/>
+        </property>
+        <property name="nickname">
+            <column name="NICKNAME" sql-type="char(255)"
+                    not-null="false"/>
+        </property>
+        <property name="totalScore" type="Integer">
+            <column name="NICKNAME" sql-type="integer"
+                    not-null="false"/>
+        </property>
+    </class>
+</hibernate-mapping>
