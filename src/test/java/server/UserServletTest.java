@@ -1,6 +1,7 @@
 package server;
 
 import db.models.User;
+import db.models.validation.ValidationException;
 import db.services.AccountService;
 import org.junit.Test;
 import server.rest.UserServlet;
@@ -12,44 +13,95 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.*;
 
 
 public class UserServletTest {
     private AccountService accountServer = mock(AccountService.class);
-
     private HttpServletResponse getMockedResponse(StringWriter stringWriter) throws IOException {
-        HttpServletResponse response = mock(HttpServletResponse.class);
-
+        final HttpServletResponse response = mock(HttpServletResponse.class);
         final PrintWriter writer = new PrintWriter(stringWriter);
-
         when(response.getWriter()).thenReturn(writer);
-
         return response;
     }
 
     private HttpServletRequest getMockedRequest(String url) {
-        HttpSession httpSession = mock(HttpSession.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
+        final HttpSession httpSession = mock(HttpSession.class);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getSession()).thenReturn(httpSession);
         when(request.getPathInfo()).thenReturn(url);
-
         return request;
     }
 
     @Test
-    public void testServletAdd() throws Exception {
+    public void testServletAdd() throws IOException, ValidationException {
         final StringWriter stringWriter = new StringWriter();
-        HttpServletResponse response = getMockedResponse(stringWriter);
-        HttpServletRequest request = getMockedRequest("/user");
-
-        UserServlet userServlet = new UserServlet(accountServer);
-        UserServlet spy = spy(userServlet);
-        User myuser = new User("lalka", "12345");
+        final HttpServletResponse response = getMockedResponse(stringWriter);
+        final HttpServletRequest request = getMockedRequest("/usfinal er");
+        final UserServlet userServlet = new UserServlet(accountServer);
+        final User myuser = new User("lalka", "12345");
+        final UserServlet spy = spy(userServlet);
         userServlet.createUser(myuser);
-
         verify(accountServer, times(1)).addUser(myuser);
     }
+
+    @Test
+    public void testServletUpdate() throws IOException, ValidationException {
+    final StringWriter stringWriter = new StringWriter();
+        final HttpServletResponse response = getMockedResponse(stringWriter);
+        final HttpServletRequest request = getMockedRequest("/usfinal er");
+        final UserServlet userServlet = new UserServlet(accountServer);
+        final User myuser = new User("lalka", "12345");
+        final UserServlet spy = spy(userServlet);
+        userServlet.createUser(myuser);
+        myuser.setNickname("nick");
+        userServlet.updateUser(1L, myuser);
+        verify(accountServer, times(1)).changeUser(myuser);
+    }
+    @Test
+    public void testServerRemove() throws IOException, ValidationException {
+        final StringWriter stringWriter = new StringWriter();
+        final HttpServletResponse response = getMockedResponse(stringWriter);
+        final HttpServletRequest request = getMockedRequest("/usfinal er");
+        final UserServlet userServlet = new UserServlet(accountServer);
+        final User myuser = new User("lalka", "12345");
+        final UserServlet spy = spy(userServlet);
+        userServlet.createUser(myuser);
+        userServlet.removeUser(1L);
+        verify(accountServer, times(1)).removeUser(1L);
+    }
+    @Test
+    public void testServletGetAll() throws IOException, ValidationException {
+        final StringWriter stringWriter = new StringWriter();
+        final HttpServletResponse response = getMockedResponse(stringWriter);
+        final HttpServletRequest request = getMockedRequest("/usfinal er");
+        final UserServlet userServlet = new UserServlet(accountServer);
+        final User myuser = new User("user_login", "12345");
+        final UserServlet spy = spy(userServlet);
+        for (Integer i = 0; i < 10; i++) {
+            myuser.setLogin("user_login"+i.toString());
+            myuser.setNickname("NickUser"+i.toString());
+            userServlet.createUser(myuser);
+        }
+        verify(accountServer, times(1)).getAllUsers();
+    }
+    @Test
+    public void testScoreTable() throws IOException, ValidationException {
+        final StringWriter stringWriter = new StringWriter();
+        final HttpServletResponse response = getMockedResponse(stringWriter);
+        final HttpServletRequest request = getMockedRequest("/usfinal er");
+        final UserServlet userServlet = new UserServlet(accountServer);
+        final User myuser = new User("user_login", "12345");
+        final UserServlet spy = spy(userServlet);
+        for (Integer i = 0; i < 10; i++) {
+            myuser.setLogin("user_login"+i.toString());
+            myuser.setNickname("NickUser"+i.toString());
+            myuser.increaseScore(10*i);
+            userServlet.createUser(myuser);
+        }
+        userServlet.showScoreTable();
+        verify(accountServer, times(1)).getUserScores();
+    }
+
+
 }

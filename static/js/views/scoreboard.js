@@ -1,39 +1,40 @@
+'use strict';
 define([
     'jquery',
     'backbone',
-    'tmpl/scoreboard',
-    'collections/scores'
+    'settings',
+    'collections/scores',
+    './baseView',
+    'tmpl/scoreboard'
 ], function(
     $,
     Backbone,
-    tmpl,
-    Scores
+    Settings,
+    Scores,
+    BaseView,
+    tmpl
 ){
 
-    return Backbone.View.extend({
+    var Scoreboard = BaseView.extend({
         template: tmpl,
 
         events: {
             "initView": 'render',
-            "show": 'show'
+            "show": 'show',
+            "click .btn-lg-back": function () {
+                Backbone.history.history.back();
+            }
         },
 
         initialize: function () {
             this.collection = new Scores();
             var i;
-            for (i = 0; i < 3; i++) {
+            for (i = 0; i < 3; i+=1) {
                 this.collection.add({name: "Тим", score: 55});
                 this.collection.add({name: "Ида", score: 6});
                 this.collection.add({name: "Роб", score: 545});
             }
             this.collection.sort();
-        },
-
-        show: function () {
-            this.$el.show();
-        },
-        hide: function () {
-            this.$el.hide();
         },
 
         render: function () {
@@ -46,5 +47,5 @@ define([
         }
 
     });
-    //return View;
+    return new Scoreboard();
 });

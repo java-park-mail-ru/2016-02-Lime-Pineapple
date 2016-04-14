@@ -1,18 +1,21 @@
 define([
     'underscore',
     'backbone',
-    '../models/score'
+    '../models/user',
+    'settings'
 ], function(
     _,
     Backbone,
-    Score
+    User,
+    Settings
 ){
 
     return Backbone.Collection.extend({
-        model : Score,
+        url :  Settings.getActiveServerUrl() + "/api/user/",
+        model : User,
         comparator: function(val) {
             return -val.get("score");
-        },
+        }
 
     });
 

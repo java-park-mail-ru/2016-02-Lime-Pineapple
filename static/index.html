@@ -1,28 +1,46 @@
 <!doctype html>
 <html lang="en" data-framework="backbonejs">
-<link rel="stylesheet" href="css/main.css" />
-<link rel="stylesheet" href="css/bootstrap.css" />
 	<head>
 	    <meta charset="utf-8" />
-	    <title>Whack-a-mole: Technopark Scholar Edition</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <title>Whack-a-mole: Technopark Scholar Edition</title>
 		<script src="js/lib/jquery.js"></script>
+		<script src="js/lib/bootstrap.js"></script>
+        <script src="js/lib/jquery.lettering.min.js"></script>
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		<link rel="stylesheet" href="css/main.css" />
+		<link rel="stylesheet" href="css/app.css" />
+        <link href="css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+        <link href="css/print.css" media="print" rel="stylesheet" type="text/css" />
+        <!--[if IE]>
+            <link href="css/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+        <![endif]-->
+
 	</head>
 	<body>
-		<div id="wrapper" class="container-fluid center-block">
-			<div id="page" class="text-center">
-				<h1>Whack-a-Mole!</h1>
-				<div class="col-md-4 col-md-offset-4 col-xs-6 col-xs-offset-3">
-					<div id="view__holder">
-					</div>
-					<div class="row" id="view__btn_back" ></div>
-				</div>
+		<div id="page">
 
-
-
+			<div id="wrapper-header" class="center-block text-center page__site-header">
+                <h1 id="page__site-header">
+                    Whack-A-Mole
+                </h1>
 			</div>
+			<div id="page__view-holder" class="text-center"></div>
+
+
 		</div>
+		<script src="//localhost:35729/livereload.js"></script>
 	</body>
 	<script data-main="js/main" src="js/lib/require.js"></script>
-	<script src="js/lib/bootstrap.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#page__site-header").lettering();
+        });
+    </script>
+    <script src="js/lib/html5shiv.js"></script>
+    <script src="js/lib/respond.min.js"></script>
+
+
 </html>

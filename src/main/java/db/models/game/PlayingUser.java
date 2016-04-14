@@ -36,9 +36,4 @@ public class PlayingUser {
         this.linkedUser = user;
         this.currentScore = 0L;
     }
-
-    @Override
-    public int hashCode() {
-        return this.linkedUser != null ? this.linkedUser.getId().intValue() : 0;
-    }
 }

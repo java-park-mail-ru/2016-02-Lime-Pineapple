@@ -1,26 +1,31 @@
 package server.rest;
 
 import db.services.AccountService;
+import db.services.impl.ExampleAccountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
-
+// JERSEY ignores ApplicationPath
 
 @ApplicationPath("/api/v1/")
 public class RestAppV1 extends Application {
-    private final static Logger logger = LogManager.getLogger(RestAppV1.class);
+    private static final Logger LOGGER = LogManager.getLogger(RestAppV1.class);
+    final HashSet<Object> objects;
+    final AccountService accountService;
+    public RestAppV1() {
+        objects = new HashSet<>();
+        accountService = new ExampleAccountService();
+        LOGGER.info("AccountService Initialized");
+    }
     @Override
     public Set<Object> getSingletons() {
-        logger.error("[+] Started application...");
-        final HashSet<Object> objects = new HashSet<>();
-        AccountService accountService = new db.services.impl.ExampleAccountService();
+
+        LOGGER.debug("[+] Started application...");
         objects.add(new UserServlet(accountService));
         objects.add(new SessionServlet(accountService));
-
         return objects;
     }
 }

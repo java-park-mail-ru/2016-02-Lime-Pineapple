@@ -1,9 +1,9 @@
-/**
- * Created by Raaw on 04-Mar-16.
- */
+'use strict';
 define(['jquery'],
     function ($) {
         var SETTINGS = {
+            EVENT_VIEWMANAGER_SHOW: 'viewShow',
+
             USE_PRODUCTION: true,
 
             PRODUCTION_SERVER_SCHEMA: 'http',
