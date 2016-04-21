@@ -35,7 +35,7 @@ public class Main {
             LOGGER.debug(String.format("Port is not specified. Default port - %d is used.", DEFAULT_PORT));
         }
 
-        LOGGER.debug(String.format("Starting at port: %d", port));//теперь выводит использованный порт а не дефолтный
+        LOGGER.debug(String.format("Starting at port: %d", port));
 
         final Server srv = new Server(port);
 

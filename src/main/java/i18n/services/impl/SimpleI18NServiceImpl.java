@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * package: i18n.services.impl
  */
 public class SimpleI18NServiceImpl implements I18NService {
-    private final static Logger LOGGER = LogManager.getLogger(SimpleI18NServiceImpl.class);
-    private final static String LocalizationResourceName = "Strings";
-    private final static Locale[] LOCALES = new Locale[]{ new Locale("en", "US"), new Locale("ru", "RU") };
+    private static final Logger LOGGER = LogManager.getLogger(SimpleI18NServiceImpl.class);
+    private static final String LocalizationResourceName = "Strings";
+    private static final Locale[] LOCALES = new Locale[]{ new Locale("en", "US"), new Locale("ru", "RU") };
 
     private Map<Locale, ResourceBundle> Localizations = new ConcurrentHashMap<>();
 

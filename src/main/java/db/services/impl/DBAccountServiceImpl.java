@@ -2,6 +2,8 @@ package db.services.impl;
 
 import db.models.User;
 import db.services.AccountService;
+import org.jetbrains.annotations.NotNull;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collection;
 
@@ -10,33 +12,53 @@ import java.util.Collection;
  * package: db.services.impl
  */
 public class DBAccountServiceImpl implements AccountService{
+
     @Override
-    public Collection<User> getAllUsers() {
-        return null;
+    public Collection<User> getUsers() {
+        throw new NotImplementedException();
     }
 
     @Override
-    public boolean addUser(Long userId, User user) {
-        return false;
+    public boolean hasUser(long id) {
+        throw new NotImplementedException();
+
     }
 
     @Override
-    public Long addUser(User user) {
-        return null;
+    public boolean hasUser(@NotNull String username) {
+        throw new NotImplementedException();
+
     }
 
     @Override
-    public User getUser(Long userId) {
-        return null;
+    public long addUser(@NotNull User user) {
+        throw new NotImplementedException();
+
     }
 
     @Override
-    public User getUser(String userName) {
-        return null;
+    public boolean removeUser(long id) {
+        throw new NotImplementedException();
+
     }
 
     @Override
-    public Collection<String> getUserScores() {
-        return null;
+    public boolean removeUser(@NotNull String username) {
+        throw new NotImplementedException();
+
+    }
+
+    @NotNull
+    @Override
+    public User getUser(long id) {
+        throw new NotImplementedException();
+
+    }
+
+    @NotNull
+    @Override
+    public User getUser(@NotNull String username) {
+        throw new NotImplementedException();
+
     }
 }

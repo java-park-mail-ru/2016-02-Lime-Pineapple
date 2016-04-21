@@ -4,77 +4,100 @@ import db.services.AccountService;
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.util.*;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Created by Raaw on 02-Mar-16.
+ */
 public class ExampleAccountServiceImpl implements AccountService {
+    private static final Logger LOGGER = LogManager.getLogger(ExampleAccountServiceImpl.class);
+
     private AtomicLong autoIncrementId = new AtomicLong(0L);
-    private static final Logger logger = LogManager.getLogger(ExampleAccountServiceImpl.class);
-    private Map<String, User> users = new ConcurrentHashMap<>();
-    private Map<Long, String> userids = new ConcurrentHashMap<>();
+    private ConcurrentMap<Long, User> tableIdUsers = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, User> tableNameUsers = new ConcurrentHashMap<>();
+
+
 
     public ExampleAccountServiceImpl() {
-        addUser(new User("admin@admin.ru", "admin"));
-        addUser(new User("guest@mail.ru", "12345"));
-        users.get("admin@admin.ru").increaseScore(10);
+        this.addUser(new User("admin@admin.ru", "admin"));
+        this.addUser(new User("guest@mail.ru", "12345"));
+        this.getUser("admin@admin.ru").increaseScore(10);
     }
 
-    public Collection<User> getAllUsers() {
-        return users.values();
+    @Override
+    public Collection<User> getUsers() {
+        return tableIdUsers.values();
     }
-    public boolean addUser(Long userId, User user) {
 
+    protected long addUser(@NotNull User user, long userId) {
         try {
-            if(this.userids.containsKey(userId)) {
-                logger.error("User with this id already exists");
-                return false;
-            }
+            if(this.tableIdUsers.containsKey(userId))
+                return 0;
             else {
-                users.put(user.getLogin(), user);
-                return true;
+                user.setId(userId);
+                this.tableIdUsers.put(userId, user);
+                this.tableNameUsers.put(user.getLogin(),user);
             }
+
         }
-        catch (Exception e) {
-
-            logger.error("Error");
-            return false;
+        catch (RuntimeException e) {
+            this.tableIdUsers.remove(userId);
+            this.tableNameUsers.remove(user.getLogin());
+            return 0;
         }
-
+        return user.getId();
     }
-    public Long addUser(User user) {
-        long value = this.autoIncrementId.incrementAndGet();
-        user.setId(value);
-        if (this.addUser(value, user)) {
-            userids.put(value, user.getLogin());
-            return user.getId();
+
+    @Override
+    public long addUser(@NotNull User user) {
+        final Long value = this.autoIncrementId.incrementAndGet();
+        return this.addUser(user, value) != 0? value : 0;
+    }
+
+    @Override
+    @NotNull
+    public User getUser(long userId) {
+        return this.tableIdUsers.getOrDefault(userId, null);
+    }
+
+    @NotNull @Override
+    public User getUser(@NotNull String userName) {
+        return this.tableNameUsers.get(userName);
+    }
+
+    @Override
+    public boolean hasUser(long id) {
+        return false;
+    }
+
+    @Override
+    public boolean hasUser(@NotNull String username) {
+        return false;
+    }
+
+    @Override
+    public boolean removeUser(long id) {
+        if(this.hasUser(id)) {
+            final User user  = this.tableIdUsers.remove(id);
+            this.tableNameUsers.remove(user.getLogin());
+            return true;
         }
-        else {
-            logger.error("User was not registrated");
-            return value;
+        return false;
+    }
+
+    @Override
+    public boolean removeUser(@NotNull String username) {
+        if(this.hasUser(username)) {
+            final User user  = this.tableNameUsers.remove(username);
+            this.tableIdUsers.remove(user.getId());
+            return true;
         }
-
+        return false;
     }
-
-    public User getUser(Long userId) {
-        if (userId == null)
-            return null;
-        return this.users.get(userids.get(userId));
-    }
-
-    public User getUser(String userName) {
-        //
-        return this.users.get(userName);
-    }
-    public Collection<String> getUserScores() {
-        Map<Integer, String> player_scores=new TreeMap<>();
-        Iterator<Map.Entry<String, User>>all_users=users.entrySet().iterator();
-        all_users.forEachRemaining(cur-> {
-            User current=cur.getValue();
-            player_scores.put(current.getScore(), current.getNickname()+" scored: "+current.getScore()+" points");
-        });
-        return player_scores.values();
-    }
-
 }
 

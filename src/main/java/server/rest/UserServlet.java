@@ -14,8 +14,11 @@ import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 import db.models.User;
 import server.rest.common.Utils;
+
+import static server.rest.common.Utils.EMPTY_JSON;
 
 
 @Singleton
@@ -33,7 +36,7 @@ public class UserServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
         logger.error("[*] Getting users...");
-        final Collection<User> allUsers = accountService.getAllUsers();
+        final Collection<User> allUsers = accountService.getUsers();
         return Response.status(Response.Status.OK).entity(allUsers.toArray(new User[allUsers.size()])).build();
     }
 
@@ -54,8 +57,8 @@ public class UserServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response showScoreTable() {
         logger.error("[*] Getting scoreboard...");
-        final Collection<String> allscores = accountService.getUserScores();
-        return Response.status(Response.Status.OK).entity(allscores.toArray(new String[allscores.size()])).build();
+        //final Collection<String> allscores = accountService.getUserScores();
+        return Response.status(Response.Status.OK).entity(EMPTY_JSON).build();
     }
 
     @POST
@@ -65,7 +68,7 @@ public class UserServlet extends HttpServlet {
         if (accountService.addUser(user) == 0L) {
             return Response.status(Response.Status.OK).entity(user.getLogin()).build();
         } else {
-            return Response.status(Response.Status.FORBIDDEN).entity(Utils.EMPTY_JSON).build();
+            return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
         }
     }
 }
