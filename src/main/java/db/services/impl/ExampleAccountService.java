@@ -6,13 +6,15 @@ import db.models.User;
 import net.sf.hibernate.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-//import java.sql.Connection;
+import java.sql.Connection;
 import java.util.*;
+
+import org.hibernate.MappingException;
+//import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
-
 import net.sf.hibernate.cfg.Configuration;
 
 public class ExampleAccountService implements AccountService {
@@ -49,7 +51,7 @@ public class ExampleAccountService implements AccountService {
         else LOGGER.info("User database loaded successfully");
     }
     @Override
-    public Collection<User> getAllUsers() {
+    public Collection<User> getUsers() {
         return users.values();
     }
 
@@ -142,7 +144,7 @@ public class ExampleAccountService implements AccountService {
         else return false;
     }
     @Override
-    public boolean removeUser(@NotNull Long userid) {
+    public boolean removeUser(long userid) {
         if (userids.containsKey(userid)) {
             final String username = userids.get(userid);
             users.remove(username);
@@ -219,7 +221,7 @@ public class ExampleAccountService implements AccountService {
         final Configuration config=new Configuration();
         config.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
         config.setProperty("hibernate.connection.drivet_class", "com.mysql.jdbc.Driver");
-        config.setProperty("hibernate.connection.url","jdbc:mysql://localhost/WHACKAMOLEUSERS");
+        config.setProperty("hibernate.connection.url","jdbc:mysql://localhosdsgdt:3306/WHACKAMOLEUSERS");
         config.setProperty("hibernate.connection.username", "root");
         config.setProperty("hibernate.connection.password", "yyvt9z3e");
         config.setProperty("hibernate.show_sql", "true");
@@ -227,7 +229,6 @@ public class ExampleAccountService implements AccountService {
         config.addResource("/src/main/java/db/models/User.hbm.xml", User.class.getClassLoader());
         sessionFactory = config.addClass(User.class).buildSessionFactory();
     }
-    @Override
     public boolean testConnect() {
         try {
             connectToDatabase();
@@ -240,5 +241,22 @@ public class ExampleAccountService implements AccountService {
             return false;
         }
     }
+    public boolean hasUser(@NotNull String username) {
+        return false;
+    }
+    @Override
+    public boolean hasUser(long id) {
+        return false;
+    }
+    @Override
+    public boolean removeUser(@NotNull String username) {
+        if(this.hasUser(username)) {
+            final User user  = this.users.remove(username);
+            this.userids.remove(user.getId());
+            return true;
+        }
+        return false;
+    }
+
 
 }

@@ -11,7 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public interface AccountService {
-    Collection<User> getAllUsers();
+
+
         // method id automatically and returns it after creation. 0 for fail
     Collection<String> getUserScores();
     boolean addUser(@NotNull Long userId, @NotNull User user);
@@ -20,9 +21,14 @@ public interface AccountService {
     User getUser(@NotNull Long userId);
     @Nullable
     User getUser(@NotNull String userName);
-    boolean removeUser(@NotNull Long userid);
     int getUsersLimit();
     int getUsersCount();
     boolean changeUser(@NotNull User user);
-    boolean testConnect() throws MappingException, HibernateException;
+    //boolean testConnect() throws MappingException, HibernateException;
+    Collection<User> getUsers();
+    boolean hasUser(long id);
+    boolean hasUser(@NotNull String username);
+    boolean removeUser(long id);
+    boolean removeUser(@NotNull String username);
+
 }

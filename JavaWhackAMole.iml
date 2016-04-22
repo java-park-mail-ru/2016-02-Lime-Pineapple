@@ -27,6 +27,7 @@
       <sourceFolder url="file://$MODULE_DIR$/lib" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/cfg" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -44,6 +45,9 @@
     <orderEntry type="library" name="org.hibernate:hibernate:3.2.7.ga" level="project" />
     <orderEntry type="library" name="org.hibernate:hibernate-core:5.0.3.Final" level="project" />
     <orderEntry type="library" name="mysql:mysql-connector-java:5.1.35" level="project" />
+    <orderEntry type="library" name="org.eclipse.jetty:jetty-websocket:8.1.17.v20150415" level="project" />
+    <orderEntry type="library" name="junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="org.eclipse.jetty:jetty-http:8.1.19.v20160209" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlets:8.1.19.v20160209" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-continuation:8.1.19.v20160209" level="project" />
@@ -51,7 +55,6 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.19.v20160209" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-websocket:8.1.19.v20160209" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:8.1.19.v20160209" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:8.1.19.v20160209" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:9.3.8.v20160314" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.3.8.v20160314" level="project" />
     <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
@@ -64,6 +67,7 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty.orbit:javax.servlet:3.0.0.v201112011016" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:8.1.19.v20160209" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:8.1.19.v20160209" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:8.1.19.v20160209" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.core:jersey-server:2.22.2" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.core:jersey-common:2.22.2" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.bundles.repackaged:jersey-guava:2.22.2" level="project" />

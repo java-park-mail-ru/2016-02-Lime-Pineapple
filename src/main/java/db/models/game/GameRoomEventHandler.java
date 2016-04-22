@@ -4,9 +4,9 @@ package db.models.game;
 import db.models.User;
 
 public interface GameRoomEventHandler {
-    void onStatusChanged(GameRoom gameRoom, RoomStatus newStatus);
-    void onUserJoined( GameRoom gameRoom  , User user);
-    void onUserLeft( GameRoom gameRoom  , User user);
-    void onParameterChanged( GameRoom gameRoom, String paramName);
-    void onGameCreated(GameRoom gameRoom);
+    void OnStatusChanged(GameRoom gameRoom, RoomStatus newStatus);
+    void OnUserJoined( GameRoom gameRoom  , User user);
+    void OnUserLeft( GameRoom gameRoom  , User user);
+    void OnParameterChanged( GameRoom gameRoom, String paramName);
+    void OnGameCreated(GameRoom gameRoom); //happens when game is initialized and put to db
 }

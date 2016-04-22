@@ -2,6 +2,6 @@ package db.models.validation;
 
 
 public interface IValidate {
-
-    void validate() throws ValidationException;
+    // method throws exception if something isn't right
+    void Validate() throws ValidationException;
 }

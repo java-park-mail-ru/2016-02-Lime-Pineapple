@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <excludeFromCompile>
+      <file url="file://$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_jetty_jetty_http_8_1_19_v20160209.xml" />
+    </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
@@ -24,11 +27,13 @@
         <processorPath useClasspath="true" />
         <module name="12" />
         <module name="JavaWhackAMole" />
+        <module name="WhackAMole" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="12" target="1.8" />
       <module name="JavaWhackAMole" target="1.8" />
+      <module name="WhackAMole" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

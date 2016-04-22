@@ -3,6 +3,8 @@ package server.rest;
 import db.services.AccountService;
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
@@ -11,29 +13,33 @@ import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static server.rest.common.Utils.EMPTY_JSON;
+
+
+
 @Path("/user/")
 public class UserServlet extends HttpServlet {
+    private static final Logger LOGGER = LogManager.getLogger(UserServlet.class);
     private AccountService accountService;
-    private static final Logger LOGGER = LogManager.getLogger(UserServlet.class.toString());
 
     public UserServlet(AccountService accountService) {
         this.accountService = accountService;
-        LOGGER.error("Initialized");
+        LOGGER.debug("Initialized");
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
+
         LOGGER.debug("[*] Getting users...");
-        final Collection<User> allUsers = accountService.getAllUsers();
+        final Collection<User> allUsers = accountService.getUsers();
         return Response.status(Response.Status.OK).entity(allUsers.toArray(new User[allUsers.size()])).build();
     }
-
     @GET
-    @Path("{name}")
+    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("name") Long name) {
-        final User user = accountService.getUser(name);
+    public Response getUserById(@PathParam("id") Long id) {
+        final User user = accountService.getUser(id);
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
         } else {
@@ -44,14 +50,13 @@ public class UserServlet extends HttpServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(User user) {
-
+    public Response createUser(User user, @Context HttpHeaders headers) {
         if (accountService.addUser(user)) {
             return Response.status(Response.Status.OK).entity(user.getLogin()).build();
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).build();
         }
-
+        else {
+            return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
+        }
     }
     @POST
     @Path("{name}")

@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 public class AccountServiceTest {
 
     private AccountService testedService = new ExampleAccountService();
-    @Test
+ /*   @Test
     boolean databaseConnectionTest() throws MappingException, HibernateException{
         try {
             return testedService.testConnect();
@@ -24,7 +24,7 @@ public class AccountServiceTest {
         catch (HibernateException e1) {
             return false;
         }
-    }
+    }*/
     @Test
     boolean addUserTest() {
         boolean passed;

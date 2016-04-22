@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
  * package: db.models.game
  */
 
-
+// This class describes user state during game
 public class PlayingUser {
-    User linkedUser;
-    Long currentScore;
+    private User linkedUser;
+    private Long currentScore;
 
     @NotNull
     public User getLinkedUser() {
@@ -36,4 +36,5 @@ public class PlayingUser {
         this.linkedUser = user;
         this.currentScore = 0L;
     }
+
 }
