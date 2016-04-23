@@ -5,6 +5,8 @@ import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import com.mysql.jdbc.Driver;
+import java.sql.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,9 +24,15 @@ public class ExampleAccountServiceImpl implements AccountService {
     private ConcurrentMap<String, User> tableNameUsers = new ConcurrentHashMap<>();
     private static final int USERLIMIT = 100000;
     public ExampleAccountServiceImpl() {
-        this.addUser(new User("admin@admin.ru", "admin"));
-        this.addUser(new User("guest@mail.ru", "12345"));
-        this.getUser("admin@admin.ru").increaseScore(10);
+        try {
+            loadUsersFromDataBase("WHACKAMOLEUSERS", "root", "yyvt9z3e");
+        }
+        catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            this.addUser(new User("admin@admin.ru", "admin"));
+            this.addUser(new User("guest@mail.ru", "12345"));
+            this.getUser("admin@admin.ru").increaseScore(10);
+        }
     }
 
     @Override
@@ -45,8 +53,14 @@ public class ExampleAccountServiceImpl implements AccountService {
             }
             if (user.getNickname().isEmpty()) user.setNickname(user.getLogin());
             if (validated) {
-                this.tableIdUsers.put(userId, user.getLogin());
-                this.tableNameUsers.put(user.getLogin(), user);
+                try {
+                    changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","insert into users(ID, login, password, nickName, score) values("+user.getId().toString()+", '"+user.getLogin()+"', '"+user.getPassword()+"', '"+user.getNickname()+"', '"+user.getScore().toString()+"') ");
+                    this.tableIdUsers.put(userId, user.getLogin());
+                    this.tableNameUsers.put(user.getLogin(), user);
+                }
+                catch (Exception e) {
+                    LOGGER.error(e.getMessage());
+                }
                 return true;
             }
             else {
@@ -87,9 +101,14 @@ public class ExampleAccountServiceImpl implements AccountService {
     @Override
     public boolean removeUser(long id) {
         if(this.hasUser(id)) {
-
-            this.tableNameUsers.remove(tableIdUsers.get(id));
-            this.tableIdUsers.remove(id);
+            try {
+                changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","delete from users where login like "+tableIdUsers.get(id));
+                this.tableNameUsers.remove(tableIdUsers.get(id));
+                this.tableIdUsers.remove(id);
+            }
+            catch (Exception e) {
+                LOGGER.error(e.getMessage());
+            }
             return true;
         }
         return false;
@@ -98,8 +117,14 @@ public class ExampleAccountServiceImpl implements AccountService {
     @Override
     public boolean removeUser(@NotNull String username) {
         if(this.hasUser(username)) {
-            final User user  = this.tableNameUsers.remove(username);
-            this.tableIdUsers.remove(user.getId());
+            try {
+                changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","delete from users where login like "+username);
+                final User user  = this.tableNameUsers.remove(username);
+                this.tableIdUsers.remove(user.getId());
+            }
+            catch (Exception e) {
+                LOGGER.error(e.getMessage());
+            }
             return true;
         }
         return false;
@@ -136,7 +161,13 @@ public class ExampleAccountServiceImpl implements AccountService {
             if (!validationResult.equals("Password is too short.")) {
                 updatingUser.setPassword(user.getPassword());
             }
-            tableNameUsers.put(user.getLogin(), updatingUser);
+            try {
+                changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","update user set nickName='"+updatingUser.getNickname()+"',password='"+updatingUser.getPassword()+"' where login like'"+updatingUser.getLogin()+"' ");
+                tableNameUsers.put(user.getLogin(), updatingUser);
+            }
+            catch (Exception e) {
+                LOGGER.error(e.getMessage());
+            }
             LOGGER.info("User was updated");
             return true;
         }
@@ -159,6 +190,61 @@ public class ExampleAccountServiceImpl implements AccountService {
         }
         LOGGER.debug("[ + ] UserData is valid");
         return "OK";
+    }
+    protected void loadUsersFromDataBase(@NotNull String baseName, @NotNull String userName, @NotNull String password) throws Exception
+    {
+        final Driver driver=(Driver) Class.forName("com.mysql.jdbc.Driver").newInstance();
+        DriverManager.registerDriver(driver);
+        String url="jdbc:mysql://localhost:3306/";
+        url=url+baseName;
+        try (final Connection connection=DriverManager.getConnection(url, userName, password)){
+
+            try(final Statement stmt = connection.createStatement()) {
+
+                stmt.execute("select * from users order by ID");
+                try(final ResultSet result = stmt.getResultSet()) {
+                    while (result.next()) {
+                        final Long id = result.getLong("ID");
+                        final String login = result.getString("login");
+                        final String userPassword = result.getString("password");
+                        final String nickname = result.getString("nickName");
+                        final int userScore = result.getInt("score");
+                        final User newUser = new User(login, userPassword);
+                        newUser.setId(id);
+                        newUser.setNickname(nickname);
+                        newUser.increaseScore(userScore);
+                        this.autoIncrementId.incrementAndGet();
+                        tableIdUsers.put(id, login);
+                        tableNameUsers.put(login, newUser);
+                    }
+                }
+            }
+            catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+        catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+    protected void changeUserInDataBase(@NotNull String baseName, @NotNull String userName, @NotNull String password, @NotNull String query) throws Exception
+    {
+        final Driver driver=(Driver) Class.forName("com.mysql.jdbc.Driver").newInstance();
+        DriverManager.registerDriver(driver);
+        String url="jdbc:mysql://localhost:3306/";
+        url=url+baseName;
+        try(final Connection connection=DriverManager.getConnection(url, userName, password)){
+
+            try(final Statement stmt = connection.createStatement()) {
+                stmt.execute(query);
+            }
+            catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+        catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 }
 

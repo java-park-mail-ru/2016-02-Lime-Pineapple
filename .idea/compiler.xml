@@ -26,8 +26,6 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="12" />
-        <module name="JavaWhackAMole" />
-        <module name="WhackAMole" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
