@@ -160,9 +160,10 @@ public class ExampleAccountServiceImpl implements AccountService {
             }
             if (!validationResult.equals("Password is too short.")) {
                 updatingUser.setPassword(user.getPassword());
+                updatingUser.increaseScore(user.getScore()-updatingUser.getScore());
             }
             try {
-                changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","update user set nickName='"+updatingUser.getNickname()+"',password='"+updatingUser.getPassword()+"' where login like'"+updatingUser.getLogin()+"' ");
+                changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","update user set nickName='"+updatingUser.getNickname()+"',password='"+updatingUser.getPassword()+"', score="+updatingUser.getScore().toString()+" where login like'"+updatingUser.getLogin()+"' ");
                 tableNameUsers.put(user.getLogin(), updatingUser);
             }
             catch (Exception e) {
