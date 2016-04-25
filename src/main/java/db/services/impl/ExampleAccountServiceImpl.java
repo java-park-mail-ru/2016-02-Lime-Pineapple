@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-
 public class ExampleAccountServiceImpl implements AccountService {
     private static final Logger LOGGER = LogManager.getLogger(ExampleAccountServiceImpl.class);
 
@@ -26,6 +25,7 @@ public class ExampleAccountServiceImpl implements AccountService {
     public ExampleAccountServiceImpl() {
         try {
             loadUsersFromDataBase("WHACKAMOLEUSERS", "root", "yyvt9z3e");
+            LOGGER.info("users loaded successfully");
         }
         catch (Exception e) {
             LOGGER.error(e.getMessage());

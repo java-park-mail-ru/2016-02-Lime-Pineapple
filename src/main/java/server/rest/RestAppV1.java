@@ -1,8 +1,7 @@
 package server.rest;
 
 import db.services.AccountService;
-//import db.services.impl.ExampleAccountService;
-import db.services.impl.ExampleAccountServiceImpl;
+import db.services.impl.DBAccountServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javax.servlet.ServletContext;
@@ -11,9 +10,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import java.util.HashSet;
 import java.util.Set;
-// JERSEY ignores ApplicationPath
 
-// JERSEY ignores ApplicationPath
 @ApplicationPath("/api/v1/")
 public class RestAppV1 extends Application {
     private static final Logger LOGGER = LogManager.getLogger(RestAppV1.class);
@@ -21,7 +18,7 @@ public class RestAppV1 extends Application {
     final AccountService accountService;
     public RestAppV1() {
         objects = new HashSet<>();
-        accountService = new ExampleAccountServiceImpl();
+        accountService = new DBAccountServiceImpl();
         LOGGER.info("AccountService Initialized");
     }
 //    @Override
