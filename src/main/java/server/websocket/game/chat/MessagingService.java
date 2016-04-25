@@ -10,16 +10,6 @@ import javax.ws.rs.core.Response;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
-
-/**
- * created: 12-Mar-16
- * package: main.game
- */
-
-
-/**
- * @see "https://habrahabr.ru/post/128380/"
- */
 @SuppressWarnings("serial")
 @WebServlet(name = "MyEcho WebSocket Servlet (EXAMPLE)", urlPatterns = { "/sockets/echo" })
 public class MessagingService extends WebSocketServlet {

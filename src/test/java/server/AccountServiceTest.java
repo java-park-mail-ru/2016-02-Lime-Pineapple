@@ -2,9 +2,10 @@ package server;
 
 import db.models.User;
 import db.services.AccountService;
-import db.services.impl.ExampleAccountService;
-import net.sf.hibernate.HibernateException;
-import net.sf.hibernate.MappingException;
+import db.services.impl.DBAccountServiceImpl;
+//import net.sf.hibernate.HibernateException;
+//import net.sf.hibernate.MappingException;
+import db.services.impl.DBAccountServiceImpl;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 public class AccountServiceTest {
 
-    private AccountService testedService = new ExampleAccountService();
+    private AccountService testedService = new DBAccountServiceImpl();
  /*   @Test
     boolean databaseConnectionTest() throws MappingException, HibernateException{
         try {

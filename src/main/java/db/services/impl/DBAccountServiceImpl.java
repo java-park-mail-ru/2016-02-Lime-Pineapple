@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
+import server.Configuration;
 
 
 public class DBAccountServiceImpl implements AccountService{
@@ -23,7 +24,10 @@ public class DBAccountServiceImpl implements AccountService{
     private ConcurrentMap<Long, String> tableIdUsers = new ConcurrentHashMap<>();
     private ConcurrentMap<String, User> tableNameUsers = new ConcurrentHashMap<>();
     private static final int USERLIMIT = 100000;
+    private Configuration dbConfig;
+
     public DBAccountServiceImpl() {
+        loadConnectionParams();
         try {
             loadUsersFromDataBase("WHACKAMOLEUSERS", "root", "yyvt9z3e");
             LOGGER.info("users loaded successfully");
@@ -55,7 +59,7 @@ public class DBAccountServiceImpl implements AccountService{
             if (user.getNickname().isEmpty()) user.setNickname(user.getLogin());
             if (validated) {
                 try {
-                    changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","insert into users(ID, login, password, nickName, score) values("+user.getId().toString()+", '"+user.getLogin()+"', '"+user.getPassword()+"', '"+user.getNickname()+"', '"+user.getScore().toString()+"') ");
+                    changeUserInDataBase(dbConfig.getDataBaseName(),dbConfig.getUserName(),dbConfig.getUserPassword(),"insert into "+dbConfig.getUserTableName()+"(ID, login, password, nickName, score) values("+user.getId().toString()+", '"+user.getLogin()+"', '"+user.getPassword()+"', '"+user.getNickname()+"', '"+user.getScore().toString()+"') ");
                     this.tableIdUsers.put(userId, user.getLogin());
                     this.tableNameUsers.put(user.getLogin(), user);
                 }
@@ -103,7 +107,7 @@ public class DBAccountServiceImpl implements AccountService{
     public boolean removeUser(long id) {
         if(this.hasUser(id)) {
             try {
-                changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","delete from users where login like "+tableIdUsers.get(id));
+                changeUserInDataBase(dbConfig.getDataBaseName(),dbConfig.getUserName(),dbConfig.getUserPassword(),"delete from "+dbConfig.getUserTableName()+" where login like "+tableIdUsers.get(id));
                 this.tableNameUsers.remove(tableIdUsers.get(id));
                 this.tableIdUsers.remove(id);
             }
@@ -119,7 +123,7 @@ public class DBAccountServiceImpl implements AccountService{
     public boolean removeUser(@NotNull String username) {
         if(this.hasUser(username)) {
             try {
-                changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","delete from users where login like "+username);
+                changeUserInDataBase(dbConfig.getDataBaseName(),dbConfig.getUserName(),dbConfig.getUserPassword(),"delete from "+dbConfig.getUserTableName()+" where login like "+username);
                 final User user  = this.tableNameUsers.remove(username);
                 this.tableIdUsers.remove(user.getId());
             }
@@ -164,7 +168,7 @@ public class DBAccountServiceImpl implements AccountService{
                 updatingUser.increaseScore(user.getScore()-updatingUser.getScore());
             }
             try {
-                changeUserInDataBase("WHACKAMOLEUSERS","root","yyvt9z3e","update user set nickName='"+updatingUser.getNickname()+"',password='"+updatingUser.getPassword()+"', score="+updatingUser.getScore().toString()+" where login like'"+updatingUser.getLogin()+"' ");
+                changeUserInDataBase(dbConfig.getDataBaseName(),dbConfig.getUserName(),dbConfig.getUserPassword(),"update "+dbConfig.getUserTableName()+" set nickName='"+updatingUser.getNickname()+"',password='"+updatingUser.getPassword()+"', score="+updatingUser.getScore().toString()+" where login like'"+updatingUser.getLogin()+"' ");
                 tableNameUsers.put(user.getLogin(), updatingUser);
             }
             catch (Exception e) {
@@ -197,8 +201,8 @@ public class DBAccountServiceImpl implements AccountService{
     {
         final Driver driver=(Driver) Class.forName("com.mysql.jdbc.Driver").newInstance();
         DriverManager.registerDriver(driver);
-        String url="jdbc:mysql://localhost:3306/";
-        url=url+baseName;
+        String url="jdbc:"+dbConfig.getBaseType()+"://"+dbConfig.getDbServer();
+        url=url+'/'+baseName;
         try (final Connection connection=DriverManager.getConnection(url, userName, password)){
 
             try(final Statement stmt = connection.createStatement()) {
@@ -233,8 +237,8 @@ public class DBAccountServiceImpl implements AccountService{
     {
         final Driver driver=(Driver) Class.forName("com.mysql.jdbc.Driver").newInstance();
         DriverManager.registerDriver(driver);
-        String url="jdbc:mysql://localhost:3306/";
-        url=url+baseName;
+        String url="jdbc:"+dbConfig.getBaseType()+"://"+dbConfig.getDbServer();
+        url=url+'/'+baseName;
         try(final Connection connection=DriverManager.getConnection(url, userName, password)){
 
             try(final Statement stmt = connection.createStatement()) {
@@ -247,6 +251,10 @@ public class DBAccountServiceImpl implements AccountService{
         catch (SQLException e) {
             LOGGER.error(e.getMessage());
         }
+    }
+    protected void loadConnectionParams() {
+        dbConfig=new Configuration("fjhdsg");
+
     }
 }
 

@@ -1,14 +1,14 @@
 package main;
 
-
 import db.services.AccountService;
-import db.services.impl.ExampleAccountServiceImpl;
+import db.services.impl.DBAccountServiceImpl;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;//библиотека добавлена в libs
 import org.glassfish.jersey.servlet.ServletContainer;
+import server.Configuration;
 import server.Context;
 import server.rest.RestAppV1;
 import org.apache.logging.log4j.LogManager;
@@ -23,23 +23,18 @@ import java.util.EnumSet;
 public class Main {
     static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
     public static final int DEFAULT_PORT = 9999;
-    //public static final String DEFAULT_HOST = "http://localhost/local";
 
     public static void main(String[] args) throws Exception {
-        final int port;
-        if (args.length == 1) {
-            port = Integer.valueOf(args[0]);
-        } else {
+
+        final Configuration srvConfig=new Configuration("fdvdf");
+        int port=srvConfig.getServerPort();
+        if (port==0) {
             port = DEFAULT_PORT;
             LOGGER.info(String.format("Port is not specified. Default port - %d is used.", DEFAULT_PORT));
-
             // TODO: Configure LOGGER and change back to info
-            LOGGER.debug(String.format("Port is not specified. Default port - %d is used.", DEFAULT_PORT));
-
         }
         LOGGER.info(String.format("Starting at port: %d", port));
         final Server srv = new Server(port);
-
         final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/");
         final FilterHolder cors = contextHandler.addFilter(CrossOriginFilter.class,"/api/*", EnumSet.of(DispatcherType.REQUEST));
@@ -83,7 +78,7 @@ public class Main {
         //LOGGER.error(Application.class.getName());
 
         final Context restContext = new Context();
-        restContext.put(AccountService.class , new ExampleAccountServiceImpl());
+        restContext.put(AccountService.class , new DBAccountServiceImpl());
 
 
         //api_v1Holder.setInitParameter("javax.ws.rs.Application",RestAppV1.class.getCanonicalName());
