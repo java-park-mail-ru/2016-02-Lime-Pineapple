@@ -4,15 +4,15 @@ import db.models.User;
 import db.models.validation.ValidationException;
 import db.services.AccountService;
 import org.junit.Test;
-//import server.rest.UserServlet;
-
+import server.rest.UserServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import javax.ws.rs.core.Context;
 
 import static org.mockito.Mockito.*;
 
@@ -41,7 +41,7 @@ public class UserServletTest {
     }
 
 
-/*    @Test
+    @Test
     public void testServletAdd() throws IOException, ValidationException {
         final StringWriter stringWriter = new StringWriter();
 
@@ -50,7 +50,7 @@ public class UserServletTest {
         final UserServlet userServlet = new UserServlet(accountServer);
         final User myuser = new User("lalka", "12345");
         final UserServlet spy = spy(userServlet);
-        userServlet.createUser(myuser);
+        //userServlet.createUser(myuser);
         userServlet.createUser(myuser, getMockedHeaders());
         verify(accountServer, times(1)).addUser(myuser);
     }
@@ -63,7 +63,7 @@ public class UserServletTest {
         final UserServlet userServlet = new UserServlet(accountServer);
         final User myuser = new User("lalka", "12345");
         final UserServlet spy = spy(userServlet);
-        userServlet.createUser(myuser);
+        //userServlet.createUser(myuser);
         myuser.setNickname("nick");
         userServlet.updateUser(1L, myuser);
         verify(accountServer, times(1)).changeUser(myuser);
@@ -76,7 +76,7 @@ public class UserServletTest {
         final UserServlet userServlet = new UserServlet(accountServer);
         final User myuser = new User("lalka", "12345");
         final UserServlet spy = spy(userServlet);
-        userServlet.createUser(myuser);
+        //userServlet.createUser(myuser);
         userServlet.removeUser(1L);
         verify(accountServer, times(1)).removeUser(1L);
     }
@@ -91,9 +91,9 @@ public class UserServletTest {
         for (Integer i = 0; i < 10; i++) {
             myuser.setLogin("user_login"+i.toString());
             myuser.setNickname("NickUser"+i.toString());
-            userServlet.createUser(myuser);
+            //userServlet.createUser(myuser);
         }
-        verify(accountServer, times(1)).getAllUsers();
+        verify(accountServer, times(1)).getUsers();
     }
     @Test
     public void testScoreTable() throws IOException, ValidationException {
@@ -107,11 +107,11 @@ public class UserServletTest {
             myuser.setLogin("user_login"+i.toString());
             myuser.setNickname("NickUser"+i.toString());
             myuser.increaseScore(10*i);
-            userServlet.createUser(myuser);
+            //userServlet.createUser(myuser);
         }
         userServlet.showScoreTable();
         verify(accountServer, times(1)).getUserScores();
     }
-*/
+
 
 }

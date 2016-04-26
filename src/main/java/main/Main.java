@@ -18,15 +18,30 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import javax.servlet.DispatcherType;
 import javax.ws.rs.core.Application;
+import java.beans.XMLDecoder;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.util.EnumSet;
 
 public class Main {
     static final Logger LOGGER = LogManager.getLogger(Main.class.getName());
     public static final int DEFAULT_PORT = 9999;
-
+    private static Configuration srvConfig;
+    protected static void readFromFile() {
+        try(final FileInputStream file = new FileInputStream("cfg/dbConfig.xml")) {
+            try (final XMLDecoder decode = new XMLDecoder(new BufferedInputStream(file))) {
+                srvConfig=(Configuration) decode.readObject();
+            }
+            file.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) throws Exception {
 
-        final Configuration srvConfig=new Configuration("fdvdf");
+        //final Configuration srvConfig=new Configuration("fdvdf");
+        readFromFile();
         int port=srvConfig.getServerPort();
         if (port==0) {
             port = DEFAULT_PORT;

@@ -6,6 +6,9 @@ import db.services.AccountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import java.beans.XMLDecoder;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.sql.*;
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,7 +32,7 @@ public class DBAccountServiceImpl implements AccountService{
     public DBAccountServiceImpl() {
         loadConnectionParams();
         try {
-            loadUsersFromDataBase("WHACKAMOLEUSERS", "root", "yyvt9z3e");
+            loadUsersFromDataBase(dbConfig.getDataBaseName(), dbConfig.getUserName(), dbConfig.getUserPassword());
             LOGGER.info("users loaded successfully");
         }
         catch (Exception e) {
@@ -207,7 +210,7 @@ public class DBAccountServiceImpl implements AccountService{
 
             try(final Statement stmt = connection.createStatement()) {
 
-                stmt.execute("select * from users order by ID");
+                stmt.execute("select * from "+dbConfig.getUserTableName()+" order by ID");
                 try(final ResultSet result = stmt.getResultSet()) {
                     while (result.next()) {
                         final Long id = result.getLong("ID");
@@ -253,8 +256,19 @@ public class DBAccountServiceImpl implements AccountService{
         }
     }
     protected void loadConnectionParams() {
-        dbConfig=new Configuration("fjhdsg");
-
+        //dbConfig=new Configuration("fjhdsg");
+        readFromFile();
+    }
+    protected void readFromFile() {
+        try(final FileInputStream file = new FileInputStream("cfg/dbConfig.xml")) {
+            try (final XMLDecoder decode = new XMLDecoder(new BufferedInputStream(file))) {
+                dbConfig=(Configuration) decode.readObject();
+            }
+            file.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
