@@ -19,7 +19,7 @@ public class User  {
             VALIDATION_MIN_NICKNAME_LENGTH = 4,
             VALIDATION_MIN_PASSWORD_LENGTH = 5;
     private static final int VALIDATION_MIN_PASSWORD_LENGTH = 5;*/
-    private final static Logger logger = LogManager.getLogger(User.class);
+    private static final Logger LOGGER = LogManager.getLogger(User.class);
 
     @NotNull
     @Id
@@ -43,7 +43,7 @@ public class User  {
         password="";
         totalScore = 0;
         nickname = "";
-        logger.debug("[+] Empty instance created.");
+        LOGGER.debug("[+] Empty instance created.");
     }
 
     public User(@NotNull String login, @NotNull String password) {
@@ -51,7 +51,7 @@ public class User  {
         this.setLogin(login);
         this.setPassword(password);
         totalScore = 0;
-        logger.debug("[+] Non-empty instance created.");
+        LOGGER.debug("[+] Non-empty instance created.");
     }
 
     @NotNull
@@ -96,14 +96,5 @@ public class User  {
     public void increaseScore(int delta) { this.totalScore+=delta; }
     public void setScore(int score) { this.totalScore = score; }
 
-    public void Validate() {
-        if ( !this.getLogin().matches( "/.+@.+\\..+/i" ) ) //any_symbol@any_symbol.any_symbol
-            throw new ValidationException("Name invalid", (long)UserValidationErrors.LOGIN_INVALID.ordinal());
-        else if ( this.getPassword().length() < VALIDATION_MIN_PASSWORD_LENGTH )
-            throw new ValidationException("Password is too short.", (long)UserValidationErrors.PASSWORD_WEAK.ordinal());
-        else if ( this.getNickname().length() < VALIDATION_MIN_NICKNAME_LENGTH )
-            throw new ValidationException("Nickname is too short.", (long)UserValidationErrors.NICKNAME_TOO_SHORT.ordinal());
-        else if ( this.getNickname().matches("/w+/i") )
-        logger.debug("[ + ] UserData is valid");
-    }
+
 }

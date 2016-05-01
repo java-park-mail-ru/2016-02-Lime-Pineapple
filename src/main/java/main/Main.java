@@ -2,6 +2,7 @@ package main;
 
 import db.services.AccountService;
 import db.services.impl.DBAccountServiceImpl;
+import db.services.impl.ExampleAccountServiceImpl;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
@@ -78,8 +79,8 @@ public class Main {
         // We can manually set all hosts, to which we respond with such a header
         LOGGER.info(Application.class.getName());
 
-        server.Context restContext = new server.Context();
-        restContext.put(db.services.AccountService.class , new db.services.impl.ExampleAccountServiceImpl());
+        Context restContext = new Context();
+        restContext.put(AccountService.class , new ExampleAccountServiceImpl());
         api_v1Holder.setInitParameter("javax.ws.rs.Application",RestAppV1.class.getCanonicalName());
         // add holder to contextHandler
         contextHandler.addServlet(api_v1Holder,"/api/v1/*");

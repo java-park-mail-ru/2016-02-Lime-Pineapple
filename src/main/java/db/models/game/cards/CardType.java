@@ -20,7 +20,7 @@ public enum CardType {
     /**
      * @param cardNameId Used to bind card name localized in desired language
      */
-    private CardType(final String cardNameId, final int cardId) {
+    CardType(final String cardNameId, final int cardId) {
         this.cardName = cardNameId;
         this.cardId = cardId;
     }

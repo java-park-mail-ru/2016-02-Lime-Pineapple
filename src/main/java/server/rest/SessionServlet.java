@@ -19,11 +19,11 @@ import server.rest.common.Utils;
 public class SessionServlet extends HttpServlet {
 
     private AccountService accountService;
-    private final static Logger LOGGER = LogManager.getLogger(SessionServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger(SessionServlet.class);
 
     public SessionServlet(AccountService accountService) {
         this.accountService = accountService;
-        logger.info("[!] Initialized");
+        LOGGER.info("[!] Initialized");
     }
 
     private Long getIdFromRequest(HttpServletRequest request) {
@@ -59,7 +59,7 @@ public class SessionServlet extends HttpServlet {
     public Response addSession(User requestedUser, @Context HttpServletRequest request) {
         final User realUser = accountService.getUser(requestedUser.getLogin());
         if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
-            logger.info("[!] Invalid logging "+requestedUser.getLogin());
+            LOGGER.info("[!] Invalid logging "+requestedUser.getLogin());
             return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
         } else {
             HttpSession currentSession = request.getSession();

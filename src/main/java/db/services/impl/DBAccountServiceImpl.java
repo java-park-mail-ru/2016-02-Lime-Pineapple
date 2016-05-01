@@ -47,10 +47,11 @@ public class DBAccountServiceImpl implements AccountService{
     public Collection<User> getUsers() {
         return tableNameUsers.values();
     }
-    @Override
-    public boolean addUser(@NotNull Long userId, @NotNull User user) {
+
+
+    public long addUser(@NotNull Long userId, @NotNull User user) {
         if(this.tableIdUsers.containsKey(userId))
-            return false;
+            return 0;
         else {
             user.setId(userId);
             boolean validated=false;
@@ -69,24 +70,24 @@ public class DBAccountServiceImpl implements AccountService{
                 catch (Exception e) {
                     LOGGER.error(e.getMessage());
                 }
-                return true;
+                return userId;
             }
             else {
                 LOGGER.debug("Invalide user data");
-                return false;
+                return 0;
             }
         }
     }
 
     @Override
-    public boolean addUser(@NotNull User user) {
+    public long addUser(@NotNull User user) {
         final Long value = this.autoIncrementId.incrementAndGet();
         return this.addUser(value, user);
     }
 
-    @Override
     @NotNull
-    public User getUser(@NotNull Long userId) {
+    @Override
+    public User getUser(@NotNull long userId) {
         return this.tableNameUsers.getOrDefault(tableIdUsers.get(userId), null);
     }
 
@@ -137,21 +138,8 @@ public class DBAccountServiceImpl implements AccountService{
         }
         return false;
     }
-    @Override
-    public Collection<String>getUserScores() {
-        final Map<Integer, String> playerscores=new TreeMap<>();
-        final Iterator<Map.Entry<String, User>> allusers=tableNameUsers.entrySet().iterator();
-        while (allusers.hasNext()) {
-            final User current=allusers.next().getValue();
-            final String score=current.getLogin() + " scored " + current.getScore().toString();
-            playerscores.put(current.getScore(), score);
-        }
-        return playerscores.values();
-    }
-    @Override
-    public int getUsersLimit() {
-        return USERLIMIT;
-    }
+
+
     @Override
     public int getUsersCount() {
         return tableNameUsers.size();
