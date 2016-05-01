@@ -5,6 +5,7 @@ import db.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -98,6 +99,16 @@ public class ExampleAccountServiceImpl implements AccountService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int getUsersCount() {
+        return this.tableIdUsers.size();
+    }
+
+    @Override
+    public boolean changeUser(@NotNull User user) {
+        throw new NotImplementedException();
     }
 }
 

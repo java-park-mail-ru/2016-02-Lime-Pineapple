@@ -26,12 +26,12 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="12" />
-        <module name="JavaWhackAMole" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="12" target="1.8" />
       <module name="JavaWhackAMole" target="1.8" />
+      <module name="WhackAMole" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

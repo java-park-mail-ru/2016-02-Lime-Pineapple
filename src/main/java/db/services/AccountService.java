@@ -2,12 +2,11 @@ package db.services;
 
 
 import db.models.User;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-
-
 
 public interface AccountService {
     Collection<User> getUsers();
@@ -22,4 +21,9 @@ public interface AccountService {
 
     @NotNull User getUser(long id);
     @NotNull User getUser(@NotNull String username);
+
+    int getUsersCount();
+    boolean changeUser(@NotNull User user);
+
+
 }

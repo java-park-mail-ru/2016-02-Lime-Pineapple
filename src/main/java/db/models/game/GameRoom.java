@@ -37,6 +37,7 @@ public class GameRoom implements IValidate {
         }
     }
 
+    @Override
     public void Validate() {
         //does nothing
     }
