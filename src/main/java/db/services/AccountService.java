@@ -2,16 +2,28 @@ package db.services;
 
 
 import db.models.User;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 
-
-
 public interface AccountService {
-    Collection<User> getAllUsers();
+    Collection<User> getUsers();
 
-    boolean addUser(Long userId, User user);
+    boolean hasUser(long id);
+    boolean hasUser(@NotNull String username);
 
-    Long addUser(User user);
-    User getUser(Long userId);
-    User getUser(String userName);
+    long addUser(@NotNull User user);
+
+    boolean removeUser(long id);
+    boolean removeUser(@NotNull String username);
+
+    @NotNull User getUser(long id);
+    @NotNull User getUser(@NotNull String username);
+
+    int getUsersCount();
+    boolean changeUser(@NotNull User user);
+
+
 }
