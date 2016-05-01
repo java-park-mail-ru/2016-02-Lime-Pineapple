@@ -23,11 +23,11 @@ public class SessionServlet extends HttpServlet {
 
     public SessionServlet(AccountService accountService) {
         this.accountService = accountService;
-        LOGGER.info("[!] Initialized");
+        logger.info("[!] Initialized");
     }
 
     private Long getIdFromRequest(HttpServletRequest request) {
-        final HttpSession currentSession = request.getSession();
+        HttpSession currentSession = request.getSession();
         return (Long)currentSession.getAttribute(Utils.USER_ID_KEY);
     }
 
@@ -59,7 +59,7 @@ public class SessionServlet extends HttpServlet {
     public Response addSession(User requestedUser, @Context HttpServletRequest request) {
         final User realUser = accountService.getUser(requestedUser.getLogin());
         if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
-            LOGGER.info("[!] Invalid logging "+requestedUser.getLogin());
+            logger.info("[!] Invalid logging "+requestedUser.getLogin());
             return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
         } else {
             HttpSession currentSession = request.getSession();

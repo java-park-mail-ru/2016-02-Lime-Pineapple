@@ -32,9 +32,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="org.eclipse.jetty:jetty-servlets:8.1.17.v20150415" level="project" />
-    <orderEntry type="library" name="org.eclipse.jetty:jetty-server:8.1.0.RC1" level="project" />
-    <orderEntry type="library" name="org.eclipse.jetty:jetty-servlet:8.0.0.RC0" level="project" />
+    <orderEntry type="library" name="org.eclipse.jetty:jetty-websocket:8.1.17.v20150415" level="project" />
+    <orderEntry type="library" name="junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="org.eclipse.jetty:jetty-http:8.1.19.v20160209" level="project" />
     <orderEntry type="library" name="org.eclipse.jetty.websocket:websocket-servlet:9.0.0.RC2" level="project" />
     <orderEntry type="library" name="org.eclipse.jetty:jetty-servlets:8.0.0.RC0" level="project" />
     <orderEntry type="library" name="ro.kuberam:junit-tests:0.1" level="project" />

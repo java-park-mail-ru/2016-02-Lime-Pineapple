@@ -8,7 +8,7 @@ import server.rest.UserServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;

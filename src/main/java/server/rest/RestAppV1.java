@@ -4,6 +4,7 @@ import db.services.AccountService;
 import db.services.impl.DBAccountServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -16,6 +17,8 @@ public class RestAppV1 extends Application {
     private static final Logger LOGGER = LogManager.getLogger(RestAppV1.class);
     final HashSet<Object> objects;
     final AccountService accountService;
+    @Context
+    ServletContext ctx;
     public RestAppV1() {
         objects = new HashSet<>();
         accountService = new DBAccountServiceImpl();
