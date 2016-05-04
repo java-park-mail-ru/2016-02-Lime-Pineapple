@@ -8,5 +8,5 @@ public interface GameRoomEventHandler {
     void OnUserJoined( GameRoom gameRoom  , User user);
     void OnUserLeft( GameRoom gameRoom  , User user);
     void OnParameterChanged( GameRoom gameRoom, String paramName);
-    void OnGameCreated(GameRoom gameRoom);
+    void OnGameCreated(GameRoom gameRoom); //happens when game is initialized and put to db
 }

@@ -4,10 +4,7 @@ import javax.servlet.annotation.WebServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
-/**
- * created: 12-Mar-16
- * package: main.game
- */
+
 
 @SuppressWarnings("serial")
 @WebServlet(name = "MyEcho WebSocket Servlet (EXAMPLE)", urlPatterns = { "/sockets/echo" })

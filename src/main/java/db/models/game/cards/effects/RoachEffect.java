@@ -10,7 +10,7 @@ import db.models.game.cards.BaseCard;
  * package: db.models.game.cards.effects
  */
 
-
+//TODO: add card triggers (on card destroy, on card clicked, on user changed, on deck changed etc.)
 public class RoachEffect implements ICardEffect {
     @Override
     public String getCardEffectName() {

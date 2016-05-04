@@ -7,17 +7,21 @@ import org.jetbrains.annotations.NotNull;
  * package: db.models.game
  */
 public enum CardType {
-    Generic("Generic Card", 0),
-    Roach("Roach Card", 1),
-    Piggie("Piggie Card", 2);
+    None("Cards.None", -1),
+    OneTimeUse("Cards.OneTimeUse.Name", 0),
+    Human("Cards.Human.Name", 1),
+    Creature("Cards.Creature.Name", 2),
+    Monster("Cards.Monster.Name", 3),
+    Spirit("Cards.Spirit.Name", 4);
+
 
     private final String cardName;
     private final int cardId;
     /**
-     * @param cardName
+     * @param cardNameId Used to bind card name localized in desired language
      */
-    private CardType(final String cardName, final int cardId) {
-        this.cardName = cardName;
+    CardType(final String cardNameId, final int cardId) {
+        this.cardName = cardNameId;
         this.cardId = cardId;
     }
 
@@ -29,7 +33,7 @@ public enum CardType {
         return cardName;
     }
 
-
+    @NotNull
     public int getCardId()
     {
         return this.cardId;

@@ -11,11 +11,11 @@ import java.util.Vector;
  * package: db.models.game
  */
 
-
+//TODO: add events: OnCardPlaced(), OnCardExpired()
 public class BaseCard {
     protected final Vector<ICardEffect> cardEffects;
     protected final CardType cardType;
-    protected final Long timeToLive;
+    protected final Long timeToLive; //time interval, after which card will expire. In milliseconds
 
     @NotNull
     public CardType getCardType() {
@@ -34,7 +34,7 @@ public class BaseCard {
 
     BaseCard() {
         this.cardEffects = new Vector<>();
-        this.cardType = CardType.Generic;
+        this.cardType = CardType.None;
         this.timeToLive = 0L;
     }
 }
