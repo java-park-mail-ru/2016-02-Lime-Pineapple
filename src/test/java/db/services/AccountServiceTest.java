@@ -1,4 +1,4 @@
-package server;
+package db.services;
 
 import db.models.User;
 import db.services.AccountService;
@@ -7,9 +7,9 @@ import db.services.impl.DBAccountServiceImpl;
 //import net.sf.hibernate.MappingException;
 import db.services.impl.DBAccountServiceImpl;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import static org.mockito.Mockito.*;
-
 
 public class AccountServiceTest {
 
@@ -26,14 +26,15 @@ public class AccountServiceTest {
             return false;
         }
     }*/
+    // TODO: split into smaller tests
     @Test
-    boolean addUserTest() {
+    public void addUserTest() {
         boolean passed;
-        passed = testedService.addUser(new User("User_test", "userpass")); //Правильные данные
-        passed = (!testedService.addUser(new User("User_test", "usert")) && passed); //Такой логин уже есть
-        passed = (!testedService.addUser(new User("User_test2", "u")) && passed);//Слабый пароль
-        passed = (!testedService.addUser(new User("", "usert")) && passed);//Пустой логин
-        return passed;
+        passed = testedService.addUser(new User("User_test", "userpass")) != 0; //Правильные данные
+        passed = (testedService.addUser(new User("User_test", "usert")) !=0 && passed); //Такой логин уже есть
+        passed = (testedService.addUser(new User("User_test2", "u")) != 0 && passed);//Слабый пароль
+        passed = (testedService.addUser(new User("", "usert")) !=0 && passed);//Пустой логин
+        assertTrue("addUserTest hasn't passed the test", passed);
     }
 
 }

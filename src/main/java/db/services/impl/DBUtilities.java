@@ -1,8 +1,8 @@
 package db.services.impl;
 
 /**
- * created: 04-May-16
+ * created: 5/19/2016
  * package: db.services.impl
  */
-public class DBAccountServiceImpl {
+public class DBUtilities {
 }
