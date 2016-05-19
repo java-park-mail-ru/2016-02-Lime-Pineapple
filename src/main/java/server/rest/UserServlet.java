@@ -8,8 +8,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
-import java.util.*;
-import java.lang.String;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,9 +17,6 @@ import static server.rest.common.Utils.EMPTY_JSON;
 
 
 import db.models.User;
-import server.rest.common.Utils;
-
-import static server.rest.common.Utils.EMPTY_JSON;
 
 
 @Path("/user/")
@@ -57,7 +53,7 @@ public class UserServlet extends HttpServlet {
     @Path("/totalScores")
     @Produces(MediaType.APPLICATION_JSON)
     public Response showScoreTable() {
-        logger.error("[*] Getting scoreboard...");
+        LOGGER.error("[*] Getting scoreboard...");
         //final Collection<String> allscores = accountService.getUserScores();
         return Response.status(Response.Status.OK).entity(EMPTY_JSON).build();
     }
@@ -66,8 +62,8 @@ public class UserServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user, @Context HttpHeaders headers) {
-        if (accountService.addUser(user)) {
-            return Response.status(Response.Status.OK).entity(user.getLogin()).build();
+        if (accountService.addUser(user) != 0) {
+            return Response.status(Response.Status.OK).entity(user.getUsername()).build();
         }
         else {
             return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
@@ -96,12 +92,5 @@ public class UserServlet extends HttpServlet {
         else return Response.status(Response.Status.FORBIDDEN).build();
     }
 
-    @GET
-    @Path("/totalScores")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response showScoreTable() {
-        LOGGER.debug("[*] Getting scoreboard...");
-        final Collection<String> allscores = accountService.getUserScores();
-        return Response.status(Response.Status.OK).entity(allscores.toString()).build();
-    }
+
 }

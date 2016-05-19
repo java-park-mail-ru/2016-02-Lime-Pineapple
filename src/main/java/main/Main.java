@@ -42,8 +42,6 @@ public class Main {
         }
     }
     public static void main(String[] args) throws Exception {
-        int port;
-            // TODO: Configure LOGGER and change back to info
         //final Configuration srvConfig=new Configuration("fdvdf");
         readFromFile();
         int port=srvConfig.getServerPort();
@@ -93,10 +91,6 @@ public class Main {
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{resource_handler, contextHandler});
         //contextHandler.setHandler(handlers);
-
-        final Context restContext = new Context();
-        restContext.put(AccountService.class , new DBAccountServiceImpl());
-
 
         //api_v1Holder.setInitParameter("javax.ws.rs.Application",RestAppV1.class.getCanonicalName());
         // add holder to contextHandler

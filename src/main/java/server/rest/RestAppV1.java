@@ -30,8 +30,6 @@ public class RestAppV1 extends Application {
 //        objects.add(new UserServlet(accountService));
 //        objects.add(new SessionServlet(accountService));
 
-    @Context
-    ServletContext ctx;
     @Override
     public Set<Object> getSingletons() {
         LOGGER.info("[+] Started application...");

@@ -8,7 +8,7 @@
     <artifactId>WhackAMole</artifactId>
     <version>0.1-SNAPSHOT</version>
     <properties>
-        <log4j.configuration>src/main/resources/log4j2.properties</log4j.configuration>
+        <log4j.configuration>cfg/log4j2.properties</log4j.configuration>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -166,6 +166,12 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.0.3.Final</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
+
 
     </dependencies>
 

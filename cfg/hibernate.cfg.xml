@@ -13,14 +13,24 @@
 
         <!-- Assume students is the database name -->
         <property name="hibernate.connection.url">
-            jdbc:mysql://db4free/tpjava
+            jdbc:mysql://127.0.0.1:3306/tpjava
         </property>
         <property name="hibernate.connection.username">
-            tpadmin
+            tpdb_admin
         </property>
         <property name="hibernate.connection.password">
             Lalka123
         </property>
+
+        <property name="hbm2ddl.auto">
+            update
+        </property>
+
+        <property name="hibernate.current_session_context_class">
+            thread
+        </property>
+
+
         <property name='show_sql'>true</property>
         <mapping class="db.models.User" />
     </session-factory>

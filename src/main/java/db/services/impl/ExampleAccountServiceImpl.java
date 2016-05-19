@@ -42,13 +42,13 @@ public class ExampleAccountServiceImpl implements AccountService {
             else {
                 user.setId(userId);
                 this.tableIdUsers.put(userId, user);
-                this.tableNameUsers.put(user.getLogin(),user);
+                this.tableNameUsers.put(user.getUsername(),user);
             }
 
         }
         catch (RuntimeException e) {
             this.tableIdUsers.remove(userId);
-            this.tableNameUsers.remove(user.getLogin());
+            this.tableNameUsers.remove(user.getUsername());
             return 0;
         }
         return user.getId();
@@ -85,7 +85,7 @@ public class ExampleAccountServiceImpl implements AccountService {
     public boolean removeUser(long id) {
         if(this.hasUser(id)) {
             final User user  = this.tableIdUsers.remove(id);
-            this.tableNameUsers.remove(user.getLogin());
+            this.tableNameUsers.remove(user.getUsername());
             return true;
         }
         return false;
@@ -102,13 +102,19 @@ public class ExampleAccountServiceImpl implements AccountService {
     }
 
     @Override
-    public int getUsersCount() {
+    public int getCount() {
         return this.tableIdUsers.size();
     }
 
     @Override
     public boolean changeUser(@NotNull User user) {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public void clear() {
+        this.tableIdUsers.clear();
+        this.tableNameUsers.clear();
     }
 }
 

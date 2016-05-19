@@ -1,100 +1,111 @@
 package db.models;
 
-import db.models.validation.ValidationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.GenericGenerator;
 import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.*;
 
 @Entity
-@Table (name="USERS")
+@Table (name="User")
 public class User  {
-    /*private enum UserValidationErrors {
-        LOGIN_INVALID,
-        NICKNAME_TOO_SHORT,
-        NICKNAME_INVALID,
-        PASSWORD_WEAK, //use this for raw password
-    };
-    private final static int
-            VALIDATION_MIN_NICKNAME_LENGTH = 4,
-            VALIDATION_MIN_PASSWORD_LENGTH = 5;
-    private static final int VALIDATION_MIN_PASSWORD_LENGTH = 5;*/
     private static final Logger LOGGER = LogManager.getLogger(User.class);
 
     @NotNull
     @Id
-    @Column(name="ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="Id")
+    @GeneratedValue(generator="increment")
+    @GenericGenerator(name="increment", strategy = "increment")
     private Long    id           = 0L;
     @NotNull
-    @Column(name="LOGIN")
-    private String  login        = "";
+    @Column(name="Username", unique = true)
+    private String username = "";
     @NotNull
-    @Column(name="PASSWORD")
+    @Column(name="Password")
     private String  password     = "";
     @NotNull
-    @Column(name="NICKNAME")
+    @Column(name="Nickname")
     private String nickname="";
-    @Column(name="TOTALSCORE")
-    private Integer totalScore; //total score for all games
+    @Column(name="score")
+    private Integer score; //total score for all games
 
     public User() {
-        login = "";
+        username = "";
         password="";
-        totalScore = 0;
+        score = 0;
         nickname = "";
         LOGGER.debug("[+] Empty instance created.");
     }
+    public User(@NotNull String username, @NotNull String password) {
 
-    public User(@NotNull String login, @NotNull String password) {
-
-        this.setLogin(login);
-        this.setPassword(password);
-        totalScore = 0;
+        this.username = username;
+        this.password = password;
+        this.score = 0;
         LOGGER.debug("[+] Non-empty instance created.");
     }
 
     @NotNull
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return this.username;
     }
-    public void setLogin(@NotNull String login1) {
-            this.login=login1;
+    public void setUsername(@NotNull String username) {
+            this.username = username;
     }
 
     @NotNull
     public Long getId() {
         return this.id;
     }
-
-    public Long setId(@NotNull Long id1) {
-        return this.id = id1;
+    public Long setId(@NotNull Long id) {
+        return this.id = id;
     }
 
     @NotNull
     public String getPassword() {
         return password;
     }
+    public void setPassword(@NotNull String password) {
 
-    public void setPassword(@NotNull String password1) {
-
-        this.password=password1;
+        this.password=password;
     }
 
     @NotNull
     public String getNickname() {
         if (!nickname.isEmpty()) return nickname;
-        else return login;
+        else return username;
     }
     public void setNickname(@NotNull String nickname){
-
          this.nickname=nickname;
     }
 
     @NotNull
-    public Integer getScore() { return this.totalScore; }
-    public void increaseScore(int delta) { this.totalScore+=delta; }
-    public void setScore(int score) { this.totalScore = score; }
+    public Integer getScore() { return this.score; }
+    public void increaseScore(int delta) { this.score +=delta; }
+    public void setScore(int score) { this.score = score; }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
 
+        User user = (User) o;
+
+        if (!getId().equals(user.getId())) return false;
+        if (!getUsername().equals(user.getUsername())) return false;
+        if (!getPassword().equals(user.getPassword())) return false;
+        if (!getNickname().equals(user.getNickname())) return false;
+        return getScore().equals(user.getScore());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId().hashCode();
+        result = 31 * result + getUsername().hashCode();
+        result = 31 * result + getPassword().hashCode();
+        result = 31 * result + getNickname().hashCode();
+        result = 31 * result + getScore().hashCode();
+        return result;
+    }
 }
