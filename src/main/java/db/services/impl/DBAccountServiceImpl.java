@@ -7,8 +7,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,14 +16,14 @@ import java.util.List;
  */
 public class DBAccountServiceImpl implements AccountService {
 
-    public DBAccountServiceImpl() {
-
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<User> getUsers() {
         final Session session = DBSessionFactory.getCurrentSession();
-        return session.createCriteria(User.class).list();
+        final Transaction tx = session.beginTransaction();
+        final List<User> users = session.createCriteria(User.class).list();
+        tx.commit();
+        return users;
     }
 
     @Override
@@ -60,8 +58,8 @@ public class DBAccountServiceImpl implements AccountService {
     public boolean removeUser(@NotNull String username) {
         final Session session = DBSessionFactory.getCurrentSession();
         // TODO: fix this super slow method
-        Transaction tx = session.beginTransaction();
-        Object got = DBUtilities.findUniqueByProperty(session, User.class, "username", username);
+        final Transaction tx = session.beginTransaction();
+        final Object got = DBUtilities.findUniqueByProperty(session, User.class, "username", username);
         session.delete(got);
         tx.commit();
         return true;
@@ -70,7 +68,7 @@ public class DBAccountServiceImpl implements AccountService {
     @Override
     public User getUser(long id) {
         final Session session = DBSessionFactory.getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        final Transaction tx = session.beginTransaction();
         final User user = session.get(User.class, id);
         tx.commit();
         return user;

@@ -26,8 +26,8 @@ public class DBUtilities {
         return criteria.add(Restrictions.eq(propertyName, value)).list();
     }
 
-    public static Object findUniqueByProperty(Session session, Class<?> type, String propertyName, Serializable value) {
-        final Criteria criteria = session.createCriteria(type.getClass());
+    public static Object findUniqueByProperty(Session session, Class aClass, String propertyName, Serializable value) {
+        final Criteria criteria = session.createCriteria(aClass);
         return criteria.add(Restrictions.eq(propertyName, value)).uniqueResult();
     }
 }

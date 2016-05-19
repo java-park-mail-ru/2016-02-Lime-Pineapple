@@ -54,58 +54,36 @@ public class Main {
         final Server srv = new Server(port);
         final ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/");
-        // It behaves like Middleware between Servlets and response handlers
-        //cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
-        //cors.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "localhost");
-        //cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,POST,HEAD,PUT,DELETE,OPTIONS");
-        //cors.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "X-Requested-With,Content-Type,Accept,Origin");
-        // TODO: create SessionService - User sessions (active and/or authorized)
-        // TODO: create GameSessionService - currently opened games and their states
-        // TODO: create GameMechanicsService - GameLogical unit
-        // TODO: create AntiFraudGameMechanicsService - Anti-Fraud system
-        final ServletHolder api_v1Holder = new ServletHolder(ServletContainer.class);
+
+        final ServletHolder servletHolder = new ServletHolder(ServletContainer.class);
         // @see ContextHandler
         // this thing is basically instatiates all Servlets and ServletHandlers
         // We use this for Sessions, additional HEADER param in response (see below)
         // new ContextHandler (servlet initializer)
         contextHandler.setContextPath("/");
-        // new AccountService - User info storage and handler
-        //final AccountService accountService = new ExampleAccountServiceImpl();
-        // @see Cross-Origin Resource Sharing (CORS)
-        // This thing is needed to inject header into response
-        // It behaves like Middleware between Servlets and response handlers
-        // We can manually set all hosts, to which we respond with such a header
         LOGGER.info(Application.class.getName());
 
-        Context restContext = new Context();
-        restContext.put(AccountService.class , new ExampleAccountServiceImpl());
-        api_v1Holder.setInitParameter("javax.ws.rs.Application",RestAppV1.class.getCanonicalName());
+        final Context restContext = new Context();
+        restContext.put(AccountService.class , new DBAccountServiceImpl());
+        //add our Context to ServletContextHandler
+        contextHandler.setAttribute("context",restContext);
+
+        servletHolder.setInitParameter("javax.ws.rs.Application",RestAppV1.class.getCanonicalName());
+
+
         // add holder to contextHandler
-        contextHandler.addServlet(api_v1Holder,"/api/v1/*");
+        contextHandler.addServlet(servletHolder,"/api/v1/*");
 
         // Static resource servlet
-        ResourceHandler resource_handler = new ResourceHandler();
-        resource_handler.setDirectoriesListed(true);
-        resource_handler.setResourceBase("static");
-        // Used to store handlers. Basically used as Handler[]
-        HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{resource_handler, contextHandler});
-        //contextHandler.setHandler(handlers);
-
-        //api_v1Holder.setInitParameter("javax.ws.rs.Application",RestAppV1.class.getCanonicalName());
-        // add holder to contextHandler
-        //contextHandler.addServlet(api_v1Holder,"/api/v1/*");
-
-        // Static resource servlet
-        //final ResourceHandler resourceHandler = new ResourceHandler();
-        //resourceHandler.setDirectoriesListed(true);
-        //resource_handler.setResourceBase("static");
-        // Used to store handlers. Basically used as Handler[]
-        //handlers.setHandlers(new Handler[]{resource_handler, contextHandler});
-        //contextHandler.setHandler(handlers);
+        final ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.setDirectoriesListed(true);
+        resourceHandler.setResourceBase("static");
 
 
+        final HandlerList handlers = new HandlerList();
+        handlers.setHandlers(new Handler[]{resourceHandler, contextHandler});
         srv.setHandler(handlers);
+
         try
         {
             srv.start();
