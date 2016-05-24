@@ -4,10 +4,12 @@ package db.services;
 import db.models.User;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
 public interface AccountService {
+    @Nullable
     Collection<User> getUsers();
 
     boolean hasUser(long id);
@@ -18,8 +20,8 @@ public interface AccountService {
     boolean removeUser(long id);
     boolean removeUser(@NotNull String username);
 
-    User getUser(long id);
-    User getUser(@NotNull String username);
+    @Nullable User getUser(long id);
+    @Nullable User getUser(@NotNull String username);
 
     int getCount();
     boolean changeUser(@NotNull User user);

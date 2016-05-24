@@ -6,6 +6,7 @@ import org.hibernate.*;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,12 +15,20 @@ import java.util.List;
 public class DBAccountServiceImpl implements AccountService {
 
     @SuppressWarnings("unchecked")
+    @Nullable
     @Override
+
     public Collection<User> getUsers() {
-        final Session session = DBSessionFactory.getCurrentSession();
-        final Transaction tx = session.beginTransaction();
-        final List<User> users = session.createCriteria(User.class).list();
-        tx.commit();
+        List<User> users;
+        try {
+            final Session session = DBSessionFactory.getCurrentSession();
+            final Transaction tx = session.beginTransaction();
+            users = session.createCriteria(User.class).list();
+            tx.commit();
+        }
+        catch (HibernateException e) {
+            users=null;
+        }
         return users;
     }
 
