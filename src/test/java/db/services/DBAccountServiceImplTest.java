@@ -3,10 +3,10 @@ package db.services;
 import db.models.User;
 import db.services.impl.DBAccountServiceImpl;
 import db.services.impl.DBSessionFactory;
-import javafx.util.Pair;
+//import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.persistence.jaxb.Crate;
+//import org.eclipse.persistence.jaxb.Crate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -15,17 +15,14 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+//import java.util.Map;
 
 import static junit.framework.TestCase.*;
 import static junit.framework.TestCase.fail;
 
-/**
- * created: 01-Apr-16
- * package: db.services
- */
+
 public class DBAccountServiceImplTest {
     static final Logger LOGGER = LogManager.getLogger();
 
@@ -45,7 +42,7 @@ public class DBAccountServiceImplTest {
         final Session session = sessionFactory.openSession();
         try {
             LOGGER.info("[ ok ] Session is here!");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             fail(e.toString());
         } finally {
             session.close();
@@ -89,9 +86,9 @@ public class DBAccountServiceImplTest {
     }
 
     public User createAndSelectRandom(DBAccountServiceImpl dba) {
-        List<User> ids = new ArrayList<>();
+        final List<User> ids = new ArrayList<>();
         for(int i = 1; i<=100; ++i) {
-            User user = new User(String.format("test%d",i), String.format("test%dPassword",i));
+            final User user = new User(String.format("test%d",i), String.format("test%dPassword",i));
             dba.addUser(user);
             ids.add(user);
         }

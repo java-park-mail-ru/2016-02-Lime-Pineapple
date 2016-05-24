@@ -1,7 +1,6 @@
 package server.rest;
 
 import db.services.AccountService;
-import db.services.impl.DBAccountServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

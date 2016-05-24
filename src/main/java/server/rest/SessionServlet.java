@@ -27,7 +27,7 @@ public class SessionServlet extends HttpServlet {
     }
 
     private Long getIdFromRequest(HttpServletRequest request) {
-        HttpSession currentSession = request.getSession();
+        final HttpSession currentSession = request.getSession();
         return (Long)currentSession.getAttribute(Utils.USER_ID_KEY);
     }
 
@@ -62,9 +62,9 @@ public class SessionServlet extends HttpServlet {
             LOGGER.info("[!] Invalid logging "+requestedUser.getUsername());
             return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
         } else {
-            HttpSession currentSession = request.getSession();
+            final HttpSession currentSession = request.getSession();
             currentSession.setAttribute(Utils.USER_ID_KEY, realUser.getId());
-            JsonObject idJs = new JsonObject();
+            final JsonObject idJs = new JsonObject();
             idJs.addProperty("id", realUser.getId());
             return Response.status(Response.Status.OK).entity(idJs.toString()).build();
         }
@@ -73,7 +73,7 @@ public class SessionServlet extends HttpServlet {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSession(@Context HttpServletRequest request) {
-        HttpSession currentSession = request.getSession();
+        final HttpSession currentSession = request.getSession();
         currentSession.removeAttribute(Utils.USER_ID_KEY);
         return Response.status(Response.Status.OK).entity(Utils.EMPTY_JSON).build();
 

@@ -6,10 +6,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-/**
- * created: 04-May-16
- * package: db.services.impl
- */
+
 public class DBSessionFactory {
     static SessionFactory sessionFactory;
     static boolean testDB = false;
@@ -27,7 +24,7 @@ public class DBSessionFactory {
             try {
                 sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
                 // so destroy it manually.
                 StandardServiceRegistryBuilder.destroy( registry );

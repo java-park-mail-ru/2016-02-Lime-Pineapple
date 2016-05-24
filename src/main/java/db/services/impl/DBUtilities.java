@@ -7,10 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * created: 5/19/2016
- * package: db.services.impl
- */
+
 public class DBUtilities {
     public static boolean deleteById(Session session, Class<?> type, Serializable id) {
         final Object persistentInstance = session.load(type, id);

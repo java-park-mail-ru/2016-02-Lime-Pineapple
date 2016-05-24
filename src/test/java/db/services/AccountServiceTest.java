@@ -1,15 +1,14 @@
 package db.services;
 
 import db.models.User;
-import db.services.AccountService;
+//import db.services.AccountService;
 import db.services.impl.DBAccountServiceImpl;
 //import net.sf.hibernate.HibernateException;
 //import net.sf.hibernate.MappingException;
-import db.services.impl.DBAccountServiceImpl;
+//import db.services.impl.DBAccountServiceImpl;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import static org.mockito.Mockito.*;
 
 public class AccountServiceTest {
 

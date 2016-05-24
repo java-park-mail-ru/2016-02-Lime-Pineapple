@@ -10,10 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * created: 04-May-16
- * package: db.services.impl
- */
+
 public class DBAccountServiceImpl implements AccountService {
 
     @SuppressWarnings("unchecked")
@@ -38,11 +35,14 @@ public class DBAccountServiceImpl implements AccountService {
 
     @Override
     public long addUser(@NotNull User user) {
-        final Session session = DBSessionFactory.getCurrentSession();
-        session.beginTransaction();
-        session.save(user);
-        session.getTransaction().commit();
-        return user.getId();
+        if (validateUser(user)) {
+            final Session session = DBSessionFactory.getCurrentSession();
+            session.beginTransaction();
+            session.save(user);
+            session.getTransaction().commit();
+            return user.getId();
+        }
+        else return 0L;
     }
 
     @Override
@@ -108,8 +108,9 @@ public class DBAccountServiceImpl implements AccountService {
         final Query query = session.createQuery(hql);
         query.executeUpdate();
         tx.commit();
-
     }
+    private boolean validateUser(User user) {
 
-
+        return (getUser(user.getUsername())==null || user.getPassword().length()>=4);
+    }
 }

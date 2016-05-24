@@ -12,17 +12,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Created by Raaw on 02-Mar-16.
- */
 public class ExampleAccountServiceImpl implements AccountService {
     private static final Logger LOGGER = LogManager.getLogger(ExampleAccountServiceImpl.class);
 
     private AtomicLong autoIncrementId = new AtomicLong(0L);
     private ConcurrentMap<Long, User> tableIdUsers = new ConcurrentHashMap<>();
     private ConcurrentMap<String, User> tableNameUsers = new ConcurrentHashMap<>();
-
-
 
     public ExampleAccountServiceImpl() {
         this.addUser(new User("admin@admin.ru", "admin"));
