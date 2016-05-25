@@ -2,6 +2,8 @@ package db.services.impl;
 
 import db.models.User;
 import db.services.AccountService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -13,7 +15,7 @@ import java.util.List;
 
 
 public class DBAccountServiceImpl implements AccountService {
-
+    private static final Logger LOGGER = LogManager.getLogger(ExampleAccountServiceImpl.class);
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
@@ -44,14 +46,19 @@ public class DBAccountServiceImpl implements AccountService {
 
     @Override
     public long addUser(@NotNull User user) {
-        if (validateUser(user)) {
-            final Session session = DBSessionFactory.getCurrentSession();
-            session.beginTransaction();
-            session.save(user);
-            session.getTransaction().commit();
-            return user.getId();
+        try {
+            if (validateUser(user)) {
+                final Session session = DBSessionFactory.getCurrentSession();
+                session.beginTransaction();
+                session.save(user);
+                session.getTransaction().commit();
+                return user.getId();
+            } else return 0L;
         }
-        else return 0L;
+        catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return 0L;
+        }
     }
 
     @Override
@@ -82,16 +89,23 @@ public class DBAccountServiceImpl implements AccountService {
         tx.commit();
         return user;
     }
-
+    @Nullable
     @Override
     public User getUser(@NotNull String username) {
         final Session session = DBSessionFactory.getCurrentSession();
         final Transaction tx = session.beginTransaction();
         final Criteria criteria = session.createCriteria(User.class);
-        final Object user = criteria.add(Restrictions.eq("username", username))
-                .uniqueResult();
-        tx.commit();
-        return (User)user;
+        try {
+            final Object user = criteria.add(Restrictions.eq("username", username))
+                    .uniqueResult();
+            tx.commit();
+            if (user != null) {
+                return (User) user;
+            } else return null;
+        }
+        catch (HibernateException e){
+            return null;
+        }
     }
 
     @Override
@@ -120,6 +134,6 @@ public class DBAccountServiceImpl implements AccountService {
     }
     private boolean validateUser(User user) {
 
-        return (getUser(user.getUsername())==null || user.getPassword().length()>=4);
+        return (getUser(user.getUsername())==null && user.getPassword().length()>=4);
     }
 }

@@ -8,7 +8,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,22 +19,30 @@ import db.models.User;
 
 
 @Path("/user/")
-public class UserServlet extends HttpServlet {
+public class UserServlet extends HttpServlet implements Runnable {
     private static final Logger LOGGER = LogManager.getLogger(UserServlet.class);
     private AccountService accountService;
+    @Override
+    public void run(){}
 
     public UserServlet(AccountService accountService) {
         this.accountService = accountService;
         LOGGER.debug("Initialized");
     }
 
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
 
         LOGGER.debug("[*] Getting users...");
-        final Collection<User> allUsers = accountService.getUsers();
-        return Response.status(Response.Status.OK).entity(allUsers.toArray(new User[allUsers.size()])).build();
+        try {
+            final Collection<User> allUsers = accountService.getUsers();
+            return Response.status(Response.Status.OK).entity(allUsers.toArray(new User[allUsers.size()])).build();
+        }
+        catch (NullPointerException e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
     }
     @GET
     @Path("{id}")

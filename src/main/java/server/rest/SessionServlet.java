@@ -11,16 +11,24 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import db.models.User;
+import db.services.SessionService;
+import db.services.impl.SessionServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.rest.common.Utils;
 
+
 @Path("/session")
-public class SessionServlet extends HttpServlet {
+public class SessionServlet extends HttpServlet implements Runnable {
 
     private AccountService accountService;
     private static final Logger LOGGER = LogManager.getLogger(SessionServlet.class);
+    SessionService sessionList = new SessionServiceImpl();
 
+    @Override
+    public void run() {
+        LOGGER.info("started");
+    }
     public SessionServlet(AccountService accountService) {
         this.accountService = accountService;
         LOGGER.info("[!] Initialized");
@@ -43,17 +51,20 @@ public class SessionServlet extends HttpServlet {
         else {
             final User realUser = this.accountService.getUser(uid);
             if (realUser == null) {
-                return Response.status(Response.Status.OK).entity("User not found").build();
+                return Response.status(Response.Status.UNAUTHORIZED).entity("User not found").build();
             } else {
-                final JsonObject idJs = new JsonObject();
-                idJs.addProperty("id", 1L);
-                return Response.status(Response.Status.OK).entity(idJs.toString()).build();
+                final long sessId=sessionList.checkAuthorization(realUser);
+                if (sessId!=0L) {
+                    final JsonObject idJs = new JsonObject();
+                    idJs.addProperty("id", sessId);
+                    return Response.status(Response.Status.OK).entity(idJs.toString()).build();
+                }
+                else return Response.status(Response.Status.UNAUTHORIZED).entity("Not logged in").build();
             }
-
         }
     }
 
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSession(User requestedUser, @Context HttpServletRequest request) {
@@ -64,9 +75,13 @@ public class SessionServlet extends HttpServlet {
         } else {
             final HttpSession currentSession = request.getSession();
             currentSession.setAttribute(Utils.USER_ID_KEY, realUser.getId());
-            final JsonObject idJs = new JsonObject();
-            idJs.addProperty("id", realUser.getId());
-            return Response.status(Response.Status.OK).entity(idJs.toString()).build();
+            final long sessId=sessionList.logIn(realUser);
+            if (sessId!=0L) {
+                final JsonObject idJs = new JsonObject();
+                idJs.addProperty("id", sessId);
+                return Response.status(Response.Status.OK).entity(idJs.toString()).build();
+            }
+            else return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
         }
     }
 
@@ -75,8 +90,11 @@ public class SessionServlet extends HttpServlet {
     public Response removeSession(@Context HttpServletRequest request) {
         final HttpSession currentSession = request.getSession();
         currentSession.removeAttribute(Utils.USER_ID_KEY);
+        final Long uid = getIdFromRequest(request);
+        final User realUser=accountService.getUser(uid);
+        if (realUser!=null) {
+            sessionList.logOut(realUser);
+        }
         return Response.status(Response.Status.OK).entity(Utils.EMPTY_JSON).build();
-
     }
-
 }

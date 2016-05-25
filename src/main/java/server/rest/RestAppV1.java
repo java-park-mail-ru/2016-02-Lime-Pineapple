@@ -27,6 +27,7 @@ public class RestAppV1 extends Application {
         LOGGER.info("[+] Started application...");
         objects.add(new UserServlet(accountService));
         objects.add(new SessionServlet(accountService));
+
         //objects.add(new SignInServlet(accountService));
         return objects;
     }

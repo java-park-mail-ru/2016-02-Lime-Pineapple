@@ -2,12 +2,12 @@ package main;
 
 import db.services.AccountService;
 import db.services.impl.DBAccountServiceImpl;
-import db.services.impl.ExampleAccountServiceImpl;
+//import db.services.impl.ExampleAccountServiceImpl;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlets.CrossOriginFilter;//библиотека добавлена в libs
+//import org.eclipse.jetty.servlet.FilterHolder;
+//import org.eclipse.jetty.servlets.CrossOriginFilter;//библиотека добавлена в libs
 import org.glassfish.jersey.servlet.ServletContainer;
 import server.Configuration;
 import server.Context;
@@ -18,12 +18,13 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import javax.servlet.DispatcherType;
+//import javax.servlet.DispatcherType;
 import javax.ws.rs.core.Application;
 import java.beans.XMLDecoder;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.util.EnumSet;
+import java.io.IOException;
+//import java.util.EnumSet;
 
 
 public class Main {
@@ -37,7 +38,7 @@ public class Main {
             }
             file.close();
         }
-        catch (Exception e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
