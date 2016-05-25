@@ -5,6 +5,7 @@ import db.services.AccountService;
 import org.hibernate.*;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -41,7 +42,12 @@ public class DBAccountServiceImpl implements AccountService {
         final Session session = DBSessionFactory.getCurrentSession();
         session.beginTransaction();
         session.save(user);
-        session.getTransaction().commit();
+        try {
+            session.getTransaction().commit();
+
+        } catch (ConstraintViolationException expected) {
+            return 0;
+        }
         return user.getId();
     }
 

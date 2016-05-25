@@ -63,7 +63,7 @@ public class UserServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user, @Context HttpHeaders headers) {
         if (accountService.addUser(user) != 0) {
-            return Response.status(Response.Status.OK).entity(user.getUsername()).build();
+            return Response.status(Response.Status.OK).entity(user).build();
         }
         else {
             return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
@@ -75,7 +75,7 @@ public class UserServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("name") Long name, User user) {
         if (accountService.changeUser(user)) {
-            return Response.status(Response.Status.OK).entity(user.getId()).build();
+            return Response.status(Response.Status.OK).entity(user).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
         }
@@ -87,7 +87,7 @@ public class UserServlet extends HttpServlet {
     public Response removeUser(@PathParam("name") Long username) {
 
         if (accountService.removeUser(username)) {
-            return Response.status(Response.Status.OK).build();
+            return Response.status(Response.Status.OK).entity(EMPTY_JSON).build();
         }
         else return Response.status(Response.Status.FORBIDDEN).build();
     }

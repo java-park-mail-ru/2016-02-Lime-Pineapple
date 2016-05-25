@@ -16,16 +16,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SimpleI18NServiceImpl implements I18NService {
     private static final Logger LOGGER = LogManager.getLogger(SimpleI18NServiceImpl.class);
-    private static final String LocalizationResourceName = "Strings";
+    private static final String LOCALIZATION_RESOURCE_NAME = "Strings";
     private static final Locale[] LOCALES = new Locale[]{ new Locale("en", "US"), new Locale("ru", "RU") };
 
-    private Map<Locale, ResourceBundle> Localizations = new ConcurrentHashMap<>();
+    private Map<Locale, ResourceBundle> localizations = new ConcurrentHashMap<>();
 
     @Override
     public void init() {
         for (Locale loc : LOCALES) {
             try {
-                Localizations.put(loc, ResourceBundle.getBundle(LocalizationResourceName, loc));
+                localizations.put(loc, ResourceBundle.getBundle(LOCALIZATION_RESOURCE_NAME, loc));
             } catch (RuntimeException e) {
                 LOGGER.error("[!] Error happened during initializing locale(): \n"+e.toString());
             }
@@ -34,7 +34,7 @@ public class SimpleI18NServiceImpl implements I18NService {
 
     @Override
     public Set<Locale> getActiveLocales() {
-        return Localizations.keySet();
+        return localizations.keySet();
     }
 
     @Override

@@ -34,7 +34,7 @@ public class BaseCard {
 
     BaseCard() {
         this.cardEffects = new Vector<>();
-        this.cardType = CardType.None;
+        this.cardType = CardType.NONE;
         this.timeToLive = 0L;
     }
 }
