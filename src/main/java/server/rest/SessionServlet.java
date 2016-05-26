@@ -15,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.rest.common.Utils;
 
+import java.rmi.AccessException;
+
 @Path("/session")
 public class SessionServlet extends HttpServlet {
 
@@ -34,11 +36,11 @@ public class SessionServlet extends HttpServlet {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkSession(@Context HttpHeaders headers, @Context HttpServletRequest request) {
+    public Response checkSession(@Context HttpHeaders headers, @Context HttpServletRequest request) throws AccessException {
 
         final Long uid = getIdFromRequest(request);
         if (uid == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("User not authorized").build();
         }
         else {
             final User realUser = this.accountService.getUser(uid);
@@ -56,15 +58,15 @@ public class SessionServlet extends HttpServlet {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addSession(User requestedUser, @Context HttpServletRequest request) {
+    public Response addSession(User requestedUser, @Context HttpServletRequest request) throws AccessException {
         final User realUser = accountService.getUser(requestedUser.getUsername());
         if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
             LOGGER.info("[!] Invalid logging "+requestedUser.getUsername());
             return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
         } else {
-            HttpSession currentSession = request.getSession();
+            final HttpSession currentSession = request.getSession();
+            final JsonObject idJs = new JsonObject();
             currentSession.setAttribute(Utils.USER_ID_KEY, realUser.getId());
-            JsonObject idJs = new JsonObject();
             idJs.addProperty("id", realUser.getId());
             return Response.status(Response.Status.OK).entity(idJs.toString()).build();
         }

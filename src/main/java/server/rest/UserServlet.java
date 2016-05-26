@@ -7,6 +7,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.rmi.AccessException;
 import java.util.Collection;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +32,7 @@ public class UserServlet extends HttpServlet {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllUsers() {
+    public Response getAllUsers() throws AccessException {
 
         LOGGER.debug("[*] Getting users...");
         final Collection<User> allUsers = accountService.getUsers();
@@ -40,7 +41,7 @@ public class UserServlet extends HttpServlet {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("id") Long id) {
+    public Response getUserById(@PathParam("id") Long id) throws AccessException {
         final User user = accountService.getUser(id);
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -62,11 +63,16 @@ public class UserServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(User user, @Context HttpHeaders headers) {
-        if (accountService.addUser(user) != 0) {
-            return Response.status(Response.Status.OK).entity(user).build();
-        }
-        else {
-            return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
+        try {
+            if (accountService.addUser(user) != 0) {
+                return Response.status(Response.Status.OK).entity(user).build();
+            }
+            else {
+                return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
+            }
+        } catch (AccessException e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.toString()).build();
         }
     }
     @POST
@@ -86,10 +92,15 @@ public class UserServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUser(@PathParam("name") Long username) {
 
-        if (accountService.removeUser(username)) {
-            return Response.status(Response.Status.OK).entity(EMPTY_JSON).build();
+        try {
+            if (accountService.removeUser(username)) {
+                return Response.status(Response.Status.OK).entity(EMPTY_JSON).build();
+            }
+            else return Response.status(Response.Status.FORBIDDEN).build();
+        } catch (AccessException e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.toString()).build();
         }
-        else return Response.status(Response.Status.FORBIDDEN).build();
     }
 
 

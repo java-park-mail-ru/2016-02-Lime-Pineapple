@@ -2,6 +2,7 @@ package game;
 
 import db.models.User;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * created: 12-Mar-16
@@ -13,7 +14,7 @@ public class PlayingUser {
     private User linkedUser;
     private long currentScore = 0;
     private short lives = 0;
-    private long connectionId = 0;
+    private GameRoom room;
 
     @NotNull
     public User getLinkedUser() {
@@ -33,6 +34,10 @@ public class PlayingUser {
         this.currentScore += delta;
     }
 
+    @Nullable
+    public GameRoom getCurrentRoom() {
+        return this.room;
+    }
 
     public PlayingUser(@NotNull  User user) {
         this.linkedUser = user;

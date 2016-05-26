@@ -1,23 +1,19 @@
 package db.services;
 
 import db.models.User;
-import db.services.impl.DBAccountServiceImpl;
-import db.services.impl.DBSessionFactory;
-import javafx.util.Pair;
+import db.services.impl.db.DBAccountServiceImpl;
+import db.services.impl.db.DBSessionFactoryService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.persistence.jaxb.Crate;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.Test;
 
+import java.rmi.AccessException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.TestCase.*;
 import static junit.framework.TestCase.fail;
@@ -41,26 +37,31 @@ public class DBAccountServiceImplTest {
     @Test
     public void testSmokeHibernateSession() {
         LOGGER.info("[ T ] Begin testing hibernate session...");
-        final SessionFactory sessionFactory = DBSessionFactory.getSessionFactory();
-        final Session session = sessionFactory.openSession();
+        Session session = null;
         try {
-            LOGGER.info("[ ok ] Session is here!");
-        } catch (Exception e) {
+            final DBSessionFactoryService sessionFactory = new DBSessionFactoryService();
+            sessionFactory.configure();
+            session = sessionFactory.getCurrentSession();
+            LOGGER.info("[ ok ] Session created successfully!");
+        } catch (RuntimeException e) {
             fail(e.toString());
         } finally {
-            session.close();
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
-    public DBAccountServiceImpl prepareDB() {
-        DBSessionFactory.enableTestDBMode();
-        final DBAccountServiceImpl dba = new DBAccountServiceImpl();
+    public DBAccountServiceImpl prepareDB() throws AccessException {
+        final DBSessionFactoryService sessionFactory = new DBSessionFactoryService("hibernate.test.cfg.xml");
+        sessionFactory.configure();
+        final DBAccountServiceImpl dba = new DBAccountServiceImpl(sessionFactory);
         dba.clear();
         return dba;
     }
 
     @Test
-    public void testClear() {
+    public void testClear() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         for(int i = 0; i<10; ++i) {
             dba.addUser(new User(String.format("test%d",i), "test"));
@@ -70,7 +71,7 @@ public class DBAccountServiceImplTest {
     }
 
     @Test
-    public void testGetCount() {
+    public void testGetCount() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         for(int i = 0; i<10; ++i) {
             dba.addUser(new User(String.format("test%d",i), "test"));
@@ -79,7 +80,7 @@ public class DBAccountServiceImplTest {
     }
 
     @Test
-    public void testAddUser() {
+    public void testAddUser() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         final User created = new User("TESTOVIY_USER", "VAHPAROL123");
         final Long id = dba.addUser(created);
@@ -88,7 +89,7 @@ public class DBAccountServiceImplTest {
                 created.getUsername().equals(actual.getUsername()) && created.getPassword().equals(actual.getPassword()));
     }
 
-    public User createAndSelectRandom(DBAccountServiceImpl dba) {
+    public User createAndSelectRandom(DBAccountServiceImpl dba) throws AccessException {
         List<User> ids = new ArrayList<>();
         for(int i = 1; i<=100; ++i) {
             User user = new User(String.format("test%d",i), String.format("test%dPassword",i));
@@ -101,7 +102,7 @@ public class DBAccountServiceImplTest {
 
 
     @Test
-    public void testGetById() {
+    public void testGetById() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         final User user = createAndSelectRandom(dba);
         final User actualUser = dba.getUser(user.getId());
@@ -110,21 +111,21 @@ public class DBAccountServiceImplTest {
     }
 
     @Test
-    public void testHasUserById() {
+    public void testHasUserById() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         final User user = createAndSelectRandom(dba);
         assertTrue("DBA hasUser() returned false", dba.hasUser(user.getId()));
     }
 
     @Test
-    public void testHasUserByUsername() {
+    public void testHasUserByUsername() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         final User user = createAndSelectRandom(dba);
         assertTrue("DBA hasUser() returned false", dba.hasUser(user.getUsername()));
     }
 
     @Test
-    public void testGetByUsername() {
+    public void testGetByUsername() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         final User user = createAndSelectRandom(dba);
         final User actualUser = dba.getUser(user.getUsername());
@@ -133,7 +134,7 @@ public class DBAccountServiceImplTest {
     }
 
     @Test
-    public void testRemoveById() {
+    public void testRemoveById() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         final User user = createAndSelectRandom(dba);
         dba.removeUser(user.getId());
@@ -141,7 +142,7 @@ public class DBAccountServiceImplTest {
     }
 
     @Test
-    public void testRemoveByUsername() {
+    public void testRemoveByUsername() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         final User user = createAndSelectRandom(dba);
         dba.removeUser(user.getUsername());
@@ -151,7 +152,7 @@ public class DBAccountServiceImplTest {
 
     // Full test
     @Test
-    public void testHibernateEntityUser() {
+    public void testHibernateEntityUser() throws AccessException {
         final DBAccountServiceImpl dba = prepareDB();
         final User testUser = new User("test", "test");
         final long testId = dba.addUser(testUser);

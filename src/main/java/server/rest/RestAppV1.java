@@ -3,7 +3,7 @@ package server.rest;
 import db.services.AccountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import server.websocket.MessagingServlet;
+import server.messaging.socket.MessagingServlet;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.ApplicationPath;

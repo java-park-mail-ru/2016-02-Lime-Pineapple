@@ -1,18 +1,31 @@
-package server.websocket;
+package server.messaging.socket;
 
+import game.PlayingUser;
+import game.services.MessagingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
+import server.Context;
+import server.messaging.Client;
 
 import java.io.IOException;
 
 /**
  * created: 5/25/2016
- * package: server.websocket
+ * package: server.messaging
  */
 public class MessagingSocket extends WebSocketAdapter {
     private static final Logger LOGGER = LogManager.getLogger();
+
+    final MessagingService service;
+    final Client client;
+
+    public MessagingSocket(MessagingService service, Client client) {
+        this.service = service;
+        this.client = client;
+    }
+
 
     @Override
     public void onWebSocketConnect(Session sess) {
