@@ -1,5 +1,6 @@
 package db.services.impl;
 
+import db.models.UserScore;
 import db.services.AccountService;
 import db.models.User;
 import org.apache.logging.log4j.LogManager;
@@ -7,7 +8,10 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.rmi.AccessException;
 import java.util.Collection;
+import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -115,6 +119,16 @@ public class ExampleAccountServiceImpl implements AccountService {
     public void clear() {
         this.tableIdUsers.clear();
         this.tableNameUsers.clear();
+    }
+
+    @Override
+    public Collection<UserScore> getScores() throws AccessException {
+        final Collection<User> users = this.tableIdUsers.values();
+        final Collection<UserScore> scores = new Vector<>(users.size());
+        for (User u : users) {
+            scores.add(new UserScore(u));
+        }
+        return scores;
     }
 }
 

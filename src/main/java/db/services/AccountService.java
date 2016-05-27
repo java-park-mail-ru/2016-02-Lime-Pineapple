@@ -3,6 +3,7 @@ package db.services;
 
 import db.models.User;
 
+import db.models.UserScore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,14 +19,16 @@ public interface AccountService {
     long addUser(@NotNull User user) throws AccessException;
 
     boolean removeUser(long id) throws AccessException;
-    boolean removeUser(@NotNull String username);
+    boolean removeUser(@NotNull String username) throws AccessException;
 
     User getUser(long id) throws AccessException;
     User getUser(@NotNull String username) throws AccessException;
 
     int getCount() throws AccessException;
-    boolean changeUser(@NotNull User user);
+    boolean changeUser(@NotNull User user) throws AccessException;
 
-    void clear();
+    void clear() throws AccessException;
+
+    Collection<UserScore> getScores() throws AccessException;
 
 }
