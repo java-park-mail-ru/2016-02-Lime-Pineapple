@@ -2,6 +2,8 @@ package server.rest;
 
 import com.google.gson.JsonObject;
 import db.services.AccountService;
+
+import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -23,10 +25,13 @@ public class SessionServlet extends HttpServlet {
     private AccountService accountService;
     private static final Logger LOGGER = LogManager.getLogger(SessionServlet.class);
 
+    @Inject
     public SessionServlet(AccountService accountService) {
         this.accountService = accountService;
         LOGGER.info("[!] Initialized");
     }
+
+
 
     private Long getIdFromRequest(HttpServletRequest request) {
         HttpSession currentSession = request.getSession();
@@ -36,46 +41,55 @@ public class SessionServlet extends HttpServlet {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response checkSession(@Context HttpHeaders headers, @Context HttpServletRequest request) throws AccessException {
+    public Response checkSession(@Context HttpHeaders headers, @Context HttpServletRequest request) {
 
         final Long uid = getIdFromRequest(request);
         if (uid == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("User not authorized").build();
         }
         else {
-            final User realUser = this.accountService.getUser(uid);
-            if (realUser == null) {
-                return Response.status(Response.Status.OK).entity("User not found").build();
-            } else {
-                final JsonObject idJs = new JsonObject();
-                idJs.addProperty("id", 1L);
-                return Response.status(Response.Status.OK).entity(idJs.toString()).build();
+            try {
+                final User realUser = this.accountService.getUser(uid);
+                if (realUser == null) {
+                    return Response.status(Response.Status.OK).entity("User not found").build();
+                } else {
+                    final JsonObject idJs = new JsonObject();
+                    idJs.addProperty("id", 1L);
+                    return Response.status(Response.Status.OK).entity(idJs.toString()).build();
+                }
+            } catch (AccessException e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
             }
-
         }
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addSession(User requestedUser, @Context HttpServletRequest request) throws AccessException {
-        final User realUser = accountService.getUser(requestedUser.getUsername());
-        if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
-            LOGGER.info("[!] Invalid logging "+requestedUser.getUsername());
-            return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
-        } else {
-            final HttpSession currentSession = request.getSession();
-            final JsonObject idJs = new JsonObject();
-            currentSession.setAttribute(Utils.USER_ID_KEY, realUser.getId());
-            idJs.addProperty("id", realUser.getId());
-            return Response.status(Response.Status.OK).entity(idJs.toString()).build();
+    public Response addSession(User requestedUser, @Context HttpServletRequest request) {
+        final User realUser;
+        try {
+            realUser = accountService.getUser(requestedUser.getUsername());
+            if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
+                LOGGER.info("[!] Invalid logging "+requestedUser.getUsername());
+                return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
+            } else {
+                final HttpSession currentSession = request.getSession();
+                final JsonObject idJs = new JsonObject();
+                currentSession.setAttribute(Utils.USER_ID_KEY, realUser.getId());
+                idJs.addProperty("id", realUser.getId());
+                return Response.status(Response.Status.OK).entity(idJs.toString()).build();
+            }
+        } catch (AccessException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
         }
+
     }
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSession(@Context HttpServletRequest request) {
-        HttpSession currentSession = request.getSession();
+        final HttpSession currentSession = request.getSession();
         currentSession.removeAttribute(Utils.USER_ID_KEY);
         return Response.status(Response.Status.OK).entity(Utils.EMPTY_JSON).build();
 

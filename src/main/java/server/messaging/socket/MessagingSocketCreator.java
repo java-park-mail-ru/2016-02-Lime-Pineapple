@@ -6,6 +6,7 @@ package server.messaging.socket;
  */
 import game.services.MessagingService;
 import javafx.util.Pair;
+import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
@@ -29,8 +30,8 @@ public class MessagingSocketCreator implements WebSocketCreator
     {
         // Create the reusable sockets
         this.service = context.get(MessagingService.class);
-        final Properties props = context.get(Properties.class);
-        this.cookieAuthorization = (Boolean)props.getOrDefault("websockets.cookieAuthorization", true);
+        final Configuration props = context.get(Configuration.class);
+        this.cookieAuthorization = props.getBoolean("websockets.cookieAuthorization", true);
     }
 
     protected Pair<Boolean, Long> isAuthorized(ServletUpgradeRequest req) {
