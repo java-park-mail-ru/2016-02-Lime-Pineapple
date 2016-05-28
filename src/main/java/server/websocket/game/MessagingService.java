@@ -15,5 +15,4 @@ public class MessagingService extends WebSocketServlet {
         factory.register(MessagingService.class);
     }
 
-
 }

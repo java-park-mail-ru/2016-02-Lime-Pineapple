@@ -12,9 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static server.rest.common.Utils.EMPTY_JSON;
-
-
-
 import db.models.User;
 
 

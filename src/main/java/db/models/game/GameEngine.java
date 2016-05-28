@@ -10,13 +10,13 @@ public class GameEngine {
     void createRoom(User founder) {
 
     }
-    void addUserToRoom() {
+    void addUserToRoom(User client, int roomId) {
 
     }
-    void removeUserFromRoom() {
+    void removeUserFromRoom(User user, int roomId) {
 
     }
-    void deleteRoom() {
+    void deleteRoom(int roomId) {
 
     }
 }

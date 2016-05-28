@@ -17,12 +17,14 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import server.websocket.game.MessagingService;
 
 //import javax.servlet.DispatcherType;
 import javax.ws.rs.core.Application;
 import java.beans.XMLDecoder;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 //import java.util.EnumSet;
 
@@ -70,16 +72,17 @@ public class Main {
         contextHandler.setAttribute("context",restContext);
 
         servletHolder.setInitParameter("javax.ws.rs.Application",RestAppV1.class.getCanonicalName());
-
-
         // add holder to contextHandler
         contextHandler.addServlet(servletHolder,"/api/v1/*");
+        final ServletHolder websocketHolder=new ServletHolder(ServletContainer.class);
+
+        //contextHandler.addServlet(new ServletHolder(new MessagingService()), "/socket/echo/*");
+
 
         // Static resource servlet
         final ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setDirectoriesListed(true);
         resourceHandler.setResourceBase("static");
-
 
         final HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{resourceHandler, contextHandler});

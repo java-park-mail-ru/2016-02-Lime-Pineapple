@@ -17,7 +17,7 @@ public class User  {
     @Column(name="Id")
     @GeneratedValue(generator="increment")
     @GenericGenerator(name="increment", strategy = "increment")
-    private Long    id  = 0L;
+    private Long    id           = 0L;
     @NotNull
     @Column(name="Username", unique = true)
     private String username = "";
@@ -26,23 +26,39 @@ public class User  {
     private String  password     = "";
     @NotNull
     @Column(name="Nickname")
-    private String nickname="";
-    @Column(name="score")
-    private Integer score; //total score for all games
+    private String nickname = "";
+    @NotNull
+    @Column(name="Score")
+    private Integer score = 0; //total score for all games
+    @NotNull
+    @Column(name="PlayedGames")
+    private Integer playedGames = 0;
+    @NotNull
+    @Column(name="BestScore")
+    private Integer bestScore = 0;
 
     public User() {
-        username = "";
-        password="";
-        score = 0;
-        nickname = "";
-        LOGGER.debug("[+] Empty instance created.");
+
+    }
+
+
+    public User(User user) {
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+
+        this.nickname = user.getNickname();
+
+        this.score = user.getScore();
+        this.bestScore = user.getBestScore();
+        this.playedGames = user.getPlayedGames();
+        this.id = user.getId();
     }
     public User(@NotNull String username, @NotNull String password) {
 
+        LOGGER.debug("[+] Non-empty User instance created.");
         this.username = username;
         this.password = password;
         this.score = 0;
-        LOGGER.debug("[+] Non-empty instance created.");
     }
 
     @NotNull
@@ -50,7 +66,7 @@ public class User  {
         return this.username;
     }
     public void setUsername(@NotNull String username) {
-            this.username = username;
+        this.username = username;
     }
 
     @NotNull
@@ -72,11 +88,10 @@ public class User  {
 
     @NotNull
     public String getNickname() {
-        if (!nickname.isEmpty()) return nickname;
-        else return username;
+        return this.nickname;
     }
     public void setNickname(@NotNull String nickname){
-         this.nickname=nickname;
+        this.nickname=nickname;
     }
 
     @NotNull
@@ -89,13 +104,15 @@ public class User  {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
 
-        User user = (User) o;
+        final User user = (User) o;
 
         if (!getId().equals(user.getId())) return false;
         if (!getUsername().equals(user.getUsername())) return false;
         if (!getPassword().equals(user.getPassword())) return false;
         if (!getNickname().equals(user.getNickname())) return false;
-        return getScore().equals(user.getScore());
+        if (!getScore().equals(user.getScore())) return false;
+        if (!getPlayedGames().equals(user.getPlayedGames())) return false;
+        return getBestScore().equals(user.getBestScore());
 
     }
 
@@ -106,6 +123,26 @@ public class User  {
         result = 31 * result + getPassword().hashCode();
         result = 31 * result + getNickname().hashCode();
         result = 31 * result + getScore().hashCode();
+        result = 31 * result + getPlayedGames().hashCode();
+        result = 31 * result + getBestScore().hashCode();
         return result;
+    }
+
+    @NotNull
+    public Integer getBestScore() {
+        return bestScore;
+    }
+
+    public void setBestScore(@NotNull Integer bestScore) {
+        this.bestScore = bestScore;
+    }
+
+    @NotNull
+    public Integer getPlayedGames() {
+        return playedGames;
+    }
+
+    public void setPlayedGames(@NotNull Integer playedGames) {
+        this.playedGames = playedGames;
     }
 }
