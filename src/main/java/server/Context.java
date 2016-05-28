@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Context {
+    public static final String CONTEXT_KEY = "context";
+
     @NotNull
     private final Map<Class, Object> contextMap = new ConcurrentHashMap<>();
 

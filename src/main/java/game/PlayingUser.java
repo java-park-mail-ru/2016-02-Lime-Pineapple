@@ -1,7 +1,9 @@
-package db.models.game;
+package game;
 
 import db.models.User;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import server.rest.UserServlet;
 
 /**
  * created: 12-Mar-16
@@ -11,13 +13,14 @@ import org.jetbrains.annotations.NotNull;
 // This class describes user state during game
 public class PlayingUser {
     private User linkedUser;
-    private Long currentScore;
+    private long currentScore = 0;
+    private short lives = 0;
+    private GameRoom room;
 
     @NotNull
     public User getLinkedUser() {
         return linkedUser;
     }
-
     @NotNull
     public Long getCurrentScore() {
         return currentScore;
@@ -27,14 +30,25 @@ public class PlayingUser {
         this.currentScore = score;
     }
 
-    public void incrementScore(Long delta) {
+    public void incrementScore(@NotNull Long delta) {
         this.currentScore += delta;
     }
 
+    @Nullable
+    public GameRoom getCurrentRoom() {
+        return this.room;
+    }
 
     public PlayingUser(@NotNull  User user) {
         this.linkedUser = user;
-        this.currentScore = 0L;
     }
 
+    public void win() {
+        linkedUser.increaseScore((int) currentScore);
+        linkedUser.setPlayedGames(linkedUser.getPlayedGames()+1);
+    }
+    public void lose() {
+        linkedUser.increaseScore((int) currentScore);
+        linkedUser.setPlayedGames(linkedUser.getPlayedGames()+1);
+    }
 }

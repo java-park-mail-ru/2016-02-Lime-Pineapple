@@ -2,6 +2,8 @@ package server.rest;
 
 import com.google.gson.JsonObject;
 import db.services.AccountService;
+
+import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,31 +13,28 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import db.models.User;
-import db.services.SessionService;
-import db.services.impl.SessionServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.rest.common.Utils;
 
+import java.rmi.AccessException;
 
 @Path("/session")
-public class SessionServlet extends HttpServlet implements Runnable {
+public class SessionServlet extends HttpServlet {
 
     private AccountService accountService;
     private static final Logger LOGGER = LogManager.getLogger(SessionServlet.class);
-    SessionService sessionList = new SessionServiceImpl();
 
-    @Override
-    public void run() {
-        LOGGER.info("started");
-    }
+    @Inject
     public SessionServlet(AccountService accountService) {
         this.accountService = accountService;
         LOGGER.info("[!] Initialized");
     }
 
+
+
     private Long getIdFromRequest(HttpServletRequest request) {
-        final HttpSession currentSession = request.getSession();
+        HttpSession currentSession = request.getSession();
         return (Long)currentSession.getAttribute(Utils.USER_ID_KEY);
     }
 
@@ -46,43 +45,45 @@ public class SessionServlet extends HttpServlet implements Runnable {
 
         final Long uid = getIdFromRequest(request);
         if (uid == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("User not authorized").build();
         }
         else {
-            final User realUser = this.accountService.getUser(uid);
-            if (realUser == null) {
-                return Response.status(Response.Status.UNAUTHORIZED).entity("User not found").build();
-            } else {
-                final long sessId=sessionList.checkAuthorization(realUser);
-                if (sessId!=0L) {
+            try {
+                final User realUser = this.accountService.getUser(uid);
+                if (realUser == null) {
+                    return Response.status(Response.Status.OK).entity("User not found").build();
+                } else {
                     final JsonObject idJs = new JsonObject();
-                    idJs.addProperty("id", sessId);
+                    idJs.addProperty("id", 1L);
                     return Response.status(Response.Status.OK).entity(idJs.toString()).build();
                 }
-                else return Response.status(Response.Status.UNAUTHORIZED).entity("Not logged in").build();
+            } catch (AccessException e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
             }
         }
     }
 
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSession(User requestedUser, @Context HttpServletRequest request) {
-        final User realUser = accountService.getUser(requestedUser.getUsername());
-        if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
-            LOGGER.info("[!] Invalid logging "+requestedUser.getUsername());
-            return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
-        } else {
-            final HttpSession currentSession = request.getSession();
-            currentSession.setAttribute(Utils.USER_ID_KEY, realUser.getId());
-            final long sessId=sessionList.logIn(realUser);
-            if (sessId!=0L) {
+        final User realUser;
+        try {
+            realUser = accountService.getUser(requestedUser.getUsername());
+            if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
+                LOGGER.info("[!] Invalid logging "+requestedUser.getUsername());
+                return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
+            } else {
+                final HttpSession currentSession = request.getSession();
                 final JsonObject idJs = new JsonObject();
-                idJs.addProperty("id", sessId);
+                currentSession.setAttribute(Utils.USER_ID_KEY, realUser.getId());
+                idJs.addProperty("id", realUser.getId());
                 return Response.status(Response.Status.OK).entity(idJs.toString()).build();
             }
-            else return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
+        } catch (AccessException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
         }
+
     }
 
     @DELETE
@@ -90,11 +91,8 @@ public class SessionServlet extends HttpServlet implements Runnable {
     public Response removeSession(@Context HttpServletRequest request) {
         final HttpSession currentSession = request.getSession();
         currentSession.removeAttribute(Utils.USER_ID_KEY);
-        final Long uid = getIdFromRequest(request);
-        final User realUser=accountService.getUser(uid);
-        if (realUser!=null) {
-            sessionList.logOut(realUser);
-        }
         return Response.status(Response.Status.OK).entity(Utils.EMPTY_JSON).build();
+
     }
+
 }

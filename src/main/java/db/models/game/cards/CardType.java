@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
  * package: db.models.game
  */
 public enum CardType {
-    NONE("Cards.None", -1),
-    ONETIMEUSE("Cards.OneTimeUse.Name", 0),
-    HUMAN("Cards.Human.Name", 1),
-    CREATURE("Cards.Creature.Name", 2),
-    MONSTER("Cards.Monster.Name", 3),
-    SPIRIT("Cards.Spirit.Name", 4);
+    NONE("Cards.NONE", -1),
+    ONE_TIME_USE("Cards.ONE_TIME_USE.Name", 0),
+    Human("Cards.Human.Name", 1),
+    Creature("Cards.Creature.Name", 2),
+    Monster("Cards.Monster.Name", 3),
+    Spirit("Cards.Spirit.Name", 4);
 
 
     private final String cardName;
@@ -33,6 +33,7 @@ public enum CardType {
         return cardName;
     }
 
+    @NotNull
     public int getCardId()
     {
         return this.cardId;

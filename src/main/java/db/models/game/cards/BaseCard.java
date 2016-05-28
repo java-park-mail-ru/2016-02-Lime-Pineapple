@@ -2,7 +2,6 @@ package db.models.game.cards;
 
 import db.models.game.cards.effects.ICardEffect;
 import org.jetbrains.annotations.NotNull;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -10,10 +9,6 @@ import javax.smartcardio.Card;
 import java.util.List;
 import java.util.Vector;
 
-/**
- * created: 12-Mar-16
- * package: db.models.game
- */
 @Entity
 @Table(name="Cards")
 //TODO: add events: OnCardPlaced(), OnCardExpired()

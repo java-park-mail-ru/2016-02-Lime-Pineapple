@@ -66,7 +66,7 @@ public class User  {
         return this.username;
     }
     public void setUsername(@NotNull String username) {
-        this.username = username;
+            this.username = username;
     }
 
     @NotNull
@@ -91,7 +91,7 @@ public class User  {
         return this.nickname;
     }
     public void setNickname(@NotNull String nickname){
-        this.nickname=nickname;
+         this.nickname=nickname;
     }
 
     @NotNull
