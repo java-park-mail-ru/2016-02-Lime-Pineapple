@@ -29,9 +29,9 @@ public class AccountServiceTest {
     @Test
     public void addUserTest() {
         assertTrue(testedService.addUser(new User("User_test", "userpass")) != 0); //Правильные данные
-        assertTrue(testedService.addUser(new User("User_test", "usert")) !=0); //Такой логин уже есть
-        assertTrue(testedService.addUser(new User("User_test2", "u")) != 0);//Слабый пароль
-        assertTrue(testedService.addUser(new User("", "usert")) !=0);//Пустой логин
+        assertTrue(testedService.addUser(new User("User_test", "usert")) ==0); //Такой логин уже есть
+        assertTrue(testedService.addUser(new User("User_test2", "u")) == 0);//Слабый пароль
+        assertTrue(testedService.addUser(new User("", "usert")) ==0);//Пустой логин
     }
 
 }
