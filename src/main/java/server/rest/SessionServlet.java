@@ -57,9 +57,9 @@ public class SessionServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSession(User requestedUser, @Context HttpServletRequest request) {
-        final User realUser = accountService.getUser(requestedUser.getLogin());
+        final User realUser = accountService.getUser(requestedUser.getUsername());
         if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
-            LOGGER.info("[!] Invalid logging "+requestedUser.getLogin());
+            LOGGER.info("[!] Invalid logging "+requestedUser.getUsername());
             return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
         } else {
             HttpSession currentSession = request.getSession();

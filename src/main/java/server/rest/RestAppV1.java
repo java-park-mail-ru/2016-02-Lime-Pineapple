@@ -15,29 +15,17 @@ import java.util.Set;
 @ApplicationPath("/api/v1/")
 public class RestAppV1 extends Application {
     private static final Logger LOGGER = LogManager.getLogger(RestAppV1.class);
-    final HashSet<Object> objects;
-    final AccountService accountService;
+    AccountService accountService;
+    final Set<Object> objects = new HashSet<>();
+    server.Context context;
     @Context
     ServletContext ctx;
-    public RestAppV1() {
-        objects = new HashSet<>();
-        accountService = new DBAccountServiceImpl();
-        LOGGER.info("AccountService Initialized");
-    }
-//    @Override
-//    public Set<Object> getSingletons() {
-///      LOGGER.debug("[+] Started application...");
-//        objects.add(new UserServlet(accountService));
-//        objects.add(new SessionServlet(accountService));
 
-    @Context
-    ServletContext ctx;
     @Override
     public Set<Object> getSingletons() {
+        context = (server.Context)ctx.getAttribute("context");
+        accountService = context.get(AccountService.class);
         LOGGER.info("[+] Started application...");
-        //final HashSet<Object> objects = new HashSet<>();
-        // TODO: change to context
-        //final AccountService accountService = new ExampleAccountServiceImpl();
         objects.add(new UserServlet(accountService));
         objects.add(new SessionServlet(accountService));
         //objects.add(new SignInServlet(accountService));

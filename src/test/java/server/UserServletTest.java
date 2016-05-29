@@ -12,7 +12,6 @@ import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import javax.ws.rs.core.Context;
 
 import static org.mockito.Mockito.*;
 
@@ -89,7 +88,7 @@ public class UserServletTest {
         final User myuser = new User("user_login", "12345");
         final UserServlet spy = spy(userServlet);
         for (Integer i = 0; i < 10; i++) {
-            myuser.setLogin("user_login"+i.toString());
+            myuser.setUsername("user_login"+i.toString());
             myuser.setNickname("NickUser"+i.toString());
             //userServlet.createUser(myuser);
         }
@@ -104,13 +103,12 @@ public class UserServletTest {
         final User myuser = new User("user_login", "12345");
         final UserServlet spy = spy(userServlet);
         for (Integer i = 0; i < 10; i++) {
-            myuser.setLogin("user_login"+i.toString());
+            myuser.setUsername("user_login"+i.toString());
             myuser.setNickname("NickUser"+i.toString());
             myuser.increaseScore(10*i);
             //userServlet.createUser(myuser);
         }
         userServlet.showScoreTable();
-        verify(accountServer, times(1)).getUserScores();
     }
 
 
