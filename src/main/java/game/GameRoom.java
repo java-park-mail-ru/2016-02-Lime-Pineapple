@@ -57,8 +57,8 @@ public class GameRoom {
         return id;
     }
 
-    public GameRoom(PlayingUser autor, short cards) {
-        creator= autor;
+    public GameRoom(@NotNull PlayingUser autor, short cards) {
+        creator=autor;
         opponent=null;
         totalCards=cards;
         setRoomStatus(RoomStatus.WAITING_FOR_PLAYERS);
@@ -86,15 +86,15 @@ public class GameRoom {
         if (roomStatus!=RoomStatus.FINISHED) {
             if (user.equals(creator)) {
 
-                opponent.win();
-                creator.lose();
+                if (opponent!=null){ opponent.win(); winner=opponent.getLinkedUser().getNickname(); }
+                if (creator!=null) creator.lose();
                 roomStatus = RoomStatus.FINISHED;
                 creator = null;
             } else {
-                opponent.win();
-                creator.lose();
+                if (opponent!=null) opponent.lose();
+                if (creator!=null) { creator.win(); winner=creator.getLinkedUser().getNickname(); }
                 roomStatus = RoomStatus.FINISHED;
-                creator = null;
+                opponent = null;
             }
         }
         else {
@@ -106,12 +106,16 @@ public class GameRoom {
     }
     public void gameOver() {
         try {
-            if (opponent.getCurrentScore() > creator.getCurrentScore()) {
-                opponent.win();
-                creator.lose();
-            } else {
-                creator.win();
-                opponent.lose();
+            if (opponent!=null && creator!=null) {
+                if (opponent.getCurrentScore() > creator.getCurrentScore()) {
+                    opponent.win();
+                    winner=creator.getLinkedUser().getNickname();
+                    creator.lose();
+                } else {
+                    creator.win();
+                    winner=creator.getLinkedUser().getNickname();
+                    opponent.lose();
+                }
             }
             roomStatus=RoomStatus.FINISHED;
         }

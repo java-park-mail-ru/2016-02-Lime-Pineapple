@@ -154,7 +154,6 @@ public class Main {
         configureAccountService(serverContext);
         configureMessagingService(serverContext, contextHandler);
         configureRestApi(serverContext, contextHandler);
-
         configureServer(new Handler[]{resourceHandler, contextHandler}, server);
 
         try

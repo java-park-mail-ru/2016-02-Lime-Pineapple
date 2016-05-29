@@ -48,7 +48,7 @@ public class PlayingUser {
         linkedUser.setPlayedGames(linkedUser.getPlayedGames()+1);
     }
     public void lose() {
-        linkedUser.increaseScore((int) currentScore);
+        linkedUser.increaseScore((int) currentScore/2);
         linkedUser.setPlayedGames(linkedUser.getPlayedGames()+1);
     }
 }

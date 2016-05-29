@@ -23,5 +23,4 @@ public interface ICardEffect {
 
     void activateCardEffect(BaseCard linkedCard, PlayingUser cardUser, GameRoom cardOrigin );
 
-
 }
