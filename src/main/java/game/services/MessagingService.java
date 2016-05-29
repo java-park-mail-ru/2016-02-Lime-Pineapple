@@ -13,6 +13,7 @@ import java.util.concurrent.locks.Lock;
  * package: game.services
  */
 public class MessagingService {
+
     final AtomicInteger autoIncrement = new AtomicInteger(0);
     Lock lock;
     Map<Integer, MessagingSocket> clients = new ConcurrentHashMap<>();
@@ -20,7 +21,6 @@ public class MessagingService {
     public void addClient(MessagingSocket socket) {
         final Integer val = autoIncrement.incrementAndGet();
         clients.put(val, socket);
-
     }
     public void removeClient(MessagingSocket socket) {
         lock.lock();

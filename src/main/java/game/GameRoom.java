@@ -104,23 +104,29 @@ public class GameRoom {
             else opponent=null;
         }
     }
-    public void gameOver() {
+    @Nullable
+    public String gameOver() {
         try {
             if (opponent!=null && creator!=null) {
                 if (opponent.getCurrentScore() > creator.getCurrentScore()) {
                     opponent.win();
-                    winner=creator.getLinkedUser().getNickname();
+                    winner = opponent.getLinkedUser().getNickname();
                     creator.lose();
                 } else {
                     creator.win();
-                    winner=creator.getLinkedUser().getNickname();
+                    winner = creator.getLinkedUser().getNickname();
                     opponent.lose();
                 }
+                roomStatus = RoomStatus.FINISHED;
             }
-            roomStatus=RoomStatus.FINISHED;
+            return winner;
         }
         catch (NullPointerException e) {
             LOGGER.error(e.getMessage());
+            return "error";
         }
+    }
+    public boolean isempty() {
+        return (creator==null && opponent==null);
     }
 }

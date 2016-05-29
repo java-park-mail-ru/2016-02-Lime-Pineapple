@@ -4,6 +4,7 @@ import db.models.game.cards.effects.ICardEffect;
 import org.jetbrains.annotations.NotNull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.smartcardio.Card;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Vector;
 //TODO: add events: OnCardPlaced(), OnCardExpired()
 public class BaseCard {
 
-    @Column(name="cardEffects")
+    @OneToMany(mappedBy="Effects")
     protected Vector<ICardEffect> cardEffects;
     @Column(name="cardType")
     protected CardType cardType;
