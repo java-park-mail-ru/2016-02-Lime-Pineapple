@@ -18,7 +18,6 @@ public class Client {
     public PlayingUser getUser() {
         return user;
     }
-
     public int getClientId() {
         return clientId;
     }

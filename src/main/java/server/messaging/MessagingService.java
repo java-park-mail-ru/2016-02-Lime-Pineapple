@@ -1,6 +1,8 @@
 package server.messaging;
 
+import game.GameRoom;
 import game.PlayingUser;
+import game.services.GameEngineService;
 import org.jetbrains.annotations.NotNull;
 import server.messaging.socket.MessagingSocket;
 
@@ -12,9 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * created: 5/26/2016
  * package: server.messaging
  */
+ // TODO: make it interface and add realization through Futures()
 public class MessagingService {
     Map<Integer, MessagingSocket> idToSockets = new ConcurrentHashMap<>();
+    GameEngineService gameServer;
     Map<PlayingUser, MessagingSocket> usersToSockets = new ConcurrentHashMap<>();
+    Map<Long, GameRoom> runningGames =new ConcurrentHashMap<>();
 
     Map<MessageType, MessageCallback> callbackMapType = new ConcurrentHashMap<>();
     Map<String, MessageCallback> callbackMapName = new ConcurrentHashMap<>();
@@ -30,6 +35,9 @@ public class MessagingService {
     public void trigger(Message message) {
         // send to thread pool to process it
 
+    }
+    public MessagingService(GameEngineService server) {
+        gameServer=server;
     }
 
 }

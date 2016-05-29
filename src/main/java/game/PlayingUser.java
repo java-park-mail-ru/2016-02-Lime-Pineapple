@@ -3,6 +3,7 @@ package game;
 import db.models.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import server.rest.UserServlet;
 
 /**
  * created: 12-Mar-16
@@ -20,7 +21,6 @@ public class PlayingUser {
     public User getLinkedUser() {
         return linkedUser;
     }
-
     @NotNull
     public Long getCurrentScore() {
         return currentScore;
@@ -43,4 +43,12 @@ public class PlayingUser {
         this.linkedUser = user;
     }
 
+    public void win() {
+        linkedUser.increaseScore((int) currentScore);
+        linkedUser.setPlayedGames(linkedUser.getPlayedGames()+1);
+    }
+    public void lose() {
+        linkedUser.increaseScore((int) currentScore/2);
+        linkedUser.setPlayedGames(linkedUser.getPlayedGames()+1);
+    }
 }

@@ -8,7 +8,6 @@ public class Message {
     MessageType type;
     String name;
     String data;
-
     public MessageType getType() {
         return type;
     }

@@ -4,7 +4,8 @@ import db.services.AccountService;
 import db.services.impl.db.AccountDAO;
 import db.services.impl.db.DBAccountServiceImpl;
 import db.services.impl.db.DBSessionFactoryService;
-import game.services.MessagingService;
+import game.services.GameEngineService;
+import server.messaging.MessagingService;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -25,10 +26,13 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import server.messaging.socket.MessagingServlet;
 
-import javax.ws.rs.core.Application;
-import java.io.FileInputStream;
-import java.io.IOException;
+//import javax.ws.rs.core.Application;
+//import java.io.FileInputStream;
+//import java.io.IOException;
 import java.net.InetSocketAddress;
+//import java.util.Properties;
+
+import static java.lang.Integer.parseInt;
 import java.util.Properties;
 
 import static java.lang.Integer.parseInt;
@@ -87,7 +91,7 @@ public class Main {
             LOGGER.warn(String.format("[ W ] Port is not specified or is not valid. Default port - %d is used.", DEFAULT_PORT));
         }
         LOGGER.info("[ I ] Building server full endpoint address from configuration...");
-        final InetSocketAddress addr = new InetSocketAddress(address, port);
+        final InetSocketAddress addr = new InetSocketAddress(port);//не указывай адрес, если хочешь видимость по сети
         LOGGER.info("[ I ] Built successfully completed!");
         LOGGER.info(String.format("Address after configuration: http://%s:%d", address,port));
         return new Server(addr);
@@ -127,9 +131,10 @@ public class Main {
         serverContext.put(AccountService.class , service);
         serverContext.put(DBSessionFactoryService.class, factory);
     }
-
+    // TODO: Rename it to "configureGame"
     static void configureMessagingService(Context serverContext, ServletContextHandler contextHandler) {
-        serverContext.put(MessagingService.class, new MessagingService());
+        final GameEngineService gameServer=new GameEngineService();
+        serverContext.put(MessagingService.class, new MessagingService(gameServer));
         final ServletHolder holderSockets = new ServletHolder("ws-events", MessagingServlet.class);
         contextHandler.addServlet(holderSockets, "/sockets/*");
     }
