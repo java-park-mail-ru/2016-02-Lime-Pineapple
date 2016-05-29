@@ -34,7 +34,7 @@ public class SessionServlet extends HttpServlet {
 
 
     private Long getIdFromRequest(HttpServletRequest request) {
-        HttpSession currentSession = request.getSession();
+        final HttpSession currentSession = request.getSession();
         return (Long)currentSession.getAttribute(Utils.USER_ID_KEY);
     }
 
@@ -63,13 +63,12 @@ public class SessionServlet extends HttpServlet {
         }
     }
 
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSession(User requestedUser, @Context HttpServletRequest request) {
-        final User realUser;
         try {
-            realUser = accountService.getUser(requestedUser.getUsername());
+            final User realUser = accountService.getUser(requestedUser.getUsername());
             if (realUser == null || !realUser.getPassword().equals(requestedUser.getPassword())) {
                 LOGGER.info("[!] Invalid logging "+requestedUser.getUsername());
                 return Response.status(Response.Status.BAD_REQUEST).entity(Utils.EMPTY_JSON).build();
