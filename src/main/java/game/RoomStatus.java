@@ -1,4 +1,4 @@
-package db.models.game;
+package game;
 
 public enum RoomStatus {
     LOOKING_FOR_PEOPLE, // First state, when Room was created

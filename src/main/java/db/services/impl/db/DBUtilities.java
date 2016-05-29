@@ -1,4 +1,4 @@
-package db.services.impl;
+package db.services.impl.db;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;

@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
  * package: db.models.game
  */
 public enum CardType {
-    None("Cards.None", -1),
-    OneTimeUse("Cards.OneTimeUse.Name", 0),
+    NONE("Cards.NONE", -1),
+    ONE_TIME_USE("Cards.ONE_TIME_USE.Name", 0),
     Human("Cards.Human.Name", 1),
     Creature("Cards.Creature.Name", 2),
     Monster("Cards.Monster.Name", 3),
