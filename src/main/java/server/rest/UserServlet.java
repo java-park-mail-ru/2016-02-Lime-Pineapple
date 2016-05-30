@@ -36,7 +36,6 @@ public class UserServlet extends HttpServlet {
         this.accountService = accountService;
         LOGGER.debug("Initialized");
     }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
