@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * created: 5/26/2016
  * package: server.messaging
  */
+ // TODO: make it interface and add realization through Futures()
 public class MessagingService {
     Map<Integer, MessagingSocket> idToSockets = new ConcurrentHashMap<>();
     GameEngineService gameServer;

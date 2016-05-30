@@ -33,10 +33,14 @@ import java.net.InetSocketAddress;
 //import java.util.Properties;
 
 import static java.lang.Integer.parseInt;
+import java.util.Properties;
+
+import static java.lang.Integer.parseInt;
 
 
 public class Main {
     static final Logger LOGGER = LogManager.getLogger();
+
     public static final int DEFAULT_PORT = 9999;
     public static final String DEFAULT_PROP_PATH = "cfg/server.properties";
 
@@ -127,7 +131,7 @@ public class Main {
         serverContext.put(AccountService.class , service);
         serverContext.put(DBSessionFactoryService.class, factory);
     }
-
+    // TODO: Rename it to "configureGame"
     static void configureMessagingService(Context serverContext, ServletContextHandler contextHandler) {
         final GameEngineService gameServer=new GameEngineService();
         serverContext.put(MessagingService.class, new MessagingService(gameServer));
@@ -155,6 +159,7 @@ public class Main {
         configureAccountService(serverContext);
         configureMessagingService(serverContext, contextHandler);
         configureRestApi(serverContext, contextHandler);
+
         configureServer(new Handler[]{resourceHandler, contextHandler}, server);
 
         try
