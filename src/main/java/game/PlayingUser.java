@@ -15,7 +15,7 @@ public class PlayingUser {
     private User linkedUser;
     private long currentScore = 0;
     private short lives = 0;
-    private GameRoom room;
+    private long room;
 
     @NotNull
     public User getLinkedUser() {
@@ -34,15 +34,17 @@ public class PlayingUser {
         this.currentScore += delta;
     }
 
-    @Nullable
-    public GameRoom getCurrentRoom() {
+    public long getCurrentRoom() {
         return this.room;
     }
 
     public PlayingUser(@NotNull  User user) {
         this.linkedUser = user;
+        this.room=-1L;
     }
-
+    public void setRoom(long roomId) {
+        this.room=roomId;
+    }
     public void win() {
         linkedUser.increaseScore((int) currentScore);
         linkedUser.setPlayedGames(linkedUser.getPlayedGames()+1);
@@ -50,5 +52,8 @@ public class PlayingUser {
     public void lose() {
         linkedUser.increaseScore((int) currentScore/2);
         linkedUser.setPlayedGames(linkedUser.getPlayedGames()+1);
+    }
+    public String getName() {
+        return linkedUser.getUsername();
     }
 }

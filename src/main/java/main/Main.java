@@ -43,6 +43,7 @@ public class Main {
 
     public static final int DEFAULT_PORT = 9999;
     public static final String DEFAULT_PROP_PATH = "cfg/server.properties";
+    protected static final GameEngineService gameServer=new GameEngineService();
 
     @NotNull
     static Configuration loadProperties(Context serverContext) throws Throwable {
@@ -133,7 +134,7 @@ public class Main {
     }
     // TODO: Rename it to "configureGame"
     static void configureMessagingService(Context serverContext, ServletContextHandler contextHandler) {
-        final GameEngineService gameServer=new GameEngineService();
+
         serverContext.put(MessagingService.class, new MessagingService(gameServer));
         final ServletHolder holderSockets = new ServletHolder("ws-events", MessagingServlet.class);
         contextHandler.addServlet(holderSockets, "/sockets/*");
@@ -159,7 +160,6 @@ public class Main {
         configureAccountService(serverContext);
         configureMessagingService(serverContext, contextHandler);
         configureRestApi(serverContext, contextHandler);
-
         configureServer(new Handler[]{resourceHandler, contextHandler}, server);
 
         try

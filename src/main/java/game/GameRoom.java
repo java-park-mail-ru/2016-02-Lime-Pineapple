@@ -69,6 +69,7 @@ public class GameRoom {
     }
     public void startGame() {
         setRoomStatus(RoomStatus.GAME_PHASE);
+
     }
     public void pauseGame() {
         setRoomStatus(RoomStatus.PAUSE_PHASE);
@@ -84,7 +85,7 @@ public class GameRoom {
     }
     public void userExited(PlayingUser user) {
         if (roomStatus!=RoomStatus.FINISHED) {
-            if (user.equals(creator)) {
+            if (creator!=null && user.getName().equals(creator.getName())) {
 
                 if (opponent!=null){ opponent.win(); winner=opponent.getLinkedUser().getNickname(); }
                 if (creator!=null) creator.lose();
@@ -128,5 +129,15 @@ public class GameRoom {
     }
     public boolean isempty() {
         return (creator==null && opponent==null);
+    }
+    @Nullable
+    public PlayingUser getOpponent(PlayingUser user) {
+
+        if (creator != null && opponent!=null) {
+            if (creator.getName().equals(user.getName())) return opponent;
+            else if (opponent.getName().equals(user.getName())) return creator;
+            else return null;
+        }
+        else return null;
     }
 }
