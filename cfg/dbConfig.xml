@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<java version="1.8.0_72" class="java.beans.XMLDecoder">
-    <object class="server.Configuration">
-        <void property="serverPort">
-            <int>9995</int>
-        </void>
-    </object>
-</java>

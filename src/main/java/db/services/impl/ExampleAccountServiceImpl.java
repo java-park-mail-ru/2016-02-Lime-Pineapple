@@ -1,5 +1,6 @@
 package db.services.impl;
 
+import db.exceptions.DatabaseException;
 import db.models.UserScore;
 import db.services.AccountService;
 import db.models.User;
@@ -112,7 +113,7 @@ public class ExampleAccountServiceImpl implements AccountService {
 
     @Override
     public boolean changeUser(@NotNull User user) {
-        throw new NotImplementedException();
+        return true;
     }
 
     @Override
@@ -122,13 +123,24 @@ public class ExampleAccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Collection<UserScore> getScores() throws AccessException {
+    public Collection<UserScore> getScores() throws DatabaseException {
         final Collection<User> users = this.tableIdUsers.values();
         final Collection<UserScore> scores = new Vector<>(users.size());
         for (User u : users) {
             scores.add(new UserScore(u));
         }
         return scores;
+    }
+
+    @Override
+    public void updateUserStats(@NotNull User user, @NotNull Integer newScore) throws DatabaseException {
+        final int bestScore = user.getBestScore();
+        final int numGames = user.getPlayedGames();
+        user.increaseScore(newScore);
+        user.setPlayedGames(numGames+1);
+        if (newScore > bestScore){
+            user.setBestScore(newScore);
+        }
     }
 }
 
