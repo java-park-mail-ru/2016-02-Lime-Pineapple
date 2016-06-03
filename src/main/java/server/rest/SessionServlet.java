@@ -1,6 +1,7 @@
 package server.rest;
 
 import com.google.gson.JsonObject;
+import db.exceptions.DatabaseException;
 import db.services.AccountService;
 
 import javax.inject.Inject;
@@ -60,7 +61,7 @@ public class SessionServlet extends HttpServlet {
                     idJs.addProperty("id", 1L);
                     return Response.status(Response.Status.OK).entity(idJs.toString()).build();
                 }
-            } catch (AccessException e) {
+            } catch (DatabaseException e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
             }
         }
@@ -84,7 +85,7 @@ public class SessionServlet extends HttpServlet {
                 //gameEngineService.userLogin(realUser);
                 return Response.status(Response.Status.OK).entity(idJs.toString()).build();
             }
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
         }
 

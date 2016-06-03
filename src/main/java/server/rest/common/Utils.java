@@ -2,11 +2,9 @@ package server.rest.common;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import javafx.util.Pair;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.Map;
 
 /**

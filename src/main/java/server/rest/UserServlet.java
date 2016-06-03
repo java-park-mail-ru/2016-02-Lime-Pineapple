@@ -1,5 +1,6 @@
 package server.rest;
 
+import db.exceptions.DatabaseException;
 import db.models.UserScore;
 import db.services.AccountService;
 
@@ -44,7 +45,7 @@ public class UserServlet extends HttpServlet {
         try {
             final Collection<User> allUsers = accountService.getUsers();
             return Response.ok(allUsers).build();
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
         }
     }
@@ -59,7 +60,7 @@ public class UserServlet extends HttpServlet {
             } else {
                 return Response.status(Response.Status.OK).entity(user).build();
             }
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
         }
 
@@ -73,7 +74,7 @@ public class UserServlet extends HttpServlet {
         try {
             final ArrayList<UserScore> allScores =  new ArrayList<>(accountService.getScores());
             return Response.ok(allScores).build();
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             LOGGER.warn(String.format("Exception while trying to fetch Scoreboard:%n%s", e.toString()));
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
         }
@@ -90,7 +91,7 @@ public class UserServlet extends HttpServlet {
             else {
                 return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
             }
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity(e.toString()).build();
         }
@@ -106,7 +107,7 @@ public class UserServlet extends HttpServlet {
             } else {
                 return Response.status(Response.Status.FORBIDDEN).entity(EMPTY_JSON).build();
             }
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
         }
     }
@@ -121,7 +122,7 @@ public class UserServlet extends HttpServlet {
                 return Response.status(Response.Status.OK).entity(EMPTY_JSON).build();
             }
             else return Response.status(Response.Status.FORBIDDEN).build();
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity(e.toString()).build();
         }
