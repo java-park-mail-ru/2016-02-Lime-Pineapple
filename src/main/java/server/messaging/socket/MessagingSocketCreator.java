@@ -4,8 +4,9 @@ package server.messaging.socket;
  * created: 5/25/2016
  * package: server.messaging
  */
-import game.services.MessagingService;
-import javafx.util.Pair;
+import db.exceptions.DatabaseException;
+import db.services.AccountService;
+import game.PlayingUser;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,30 +15,40 @@ import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 import org.jetbrains.annotations.Nullable;
 import server.Context;
+import server.messaging.Client;
+import server.messaging.MessageService;
 
 import java.io.IOException;
 import java.net.HttpCookie;
+import java.rmi.AccessException;
 import java.util.List;
-import java.util.Properties;
 
 public class MessagingSocketCreator implements WebSocketCreator
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final MessagingService service;
-    private final Boolean cookieAuthorization;
+    static final Logger LOGGER = LogManager.getLogger();
+
+    final MessageService service;
+    final AccountService accountService;
+    final Boolean cookieAuthorization;
 
     public MessagingSocketCreator(Context context)
     {
         // Create the reusable sockets
-        this.service = context.get(MessagingService.class);
+        this.service = context.get(MessageService.class);
+        this.accountService = context.get(AccountService.class);
+
         final Configuration props = context.get(Configuration.class);
         this.cookieAuthorization = props.getBoolean("websockets.cookieAuthorization", true);
     }
 
-    protected Pair<Boolean, Long> isAuthorized(ServletUpgradeRequest req) {
+    @Nullable
+    protected Client isAuthorized(ServletUpgradeRequest req) {
         LOGGER.info(String.format("Websocket neeeds to be authorized: %b", this.cookieAuthorization));
-        if (!this.cookieAuthorization)
-            return new Pair<>(true, 0L);
+        if (!this.cookieAuthorization) {
+            LOGGER.warn("[ W ] We don't know what to do with unauthorized connections!");
+            return null;
+        }
+
         final List<HttpCookie> cookies = req.getCookies();
         LOGGER.info("[ I ] Getting authorization info");
         for (HttpCookie cookie : cookies) {
@@ -46,32 +57,36 @@ public class MessagingSocketCreator implements WebSocketCreator
                 final String value = cookie.getValue();
                 try {
                     final Long id = Long.decode(value);
+                    final PlayingUser playingUser = new PlayingUser(accountService.getUser(id));
+                    final Client client = new Client(playingUser);
+
                     if (id > 0) {
-                        LOGGER.info("[ I ] WebSocket authorized");
-                        return new Pair<>(true, id);
+                        LOGGER.info("[ I ] WebSocket authorized. Getting user by id");
+                        return client;
                     }
                 } catch (NumberFormatException e) {
                     LOGGER.warn("[ I ] Error when trying to convert user id from cookie");
+                } catch (DatabaseException e) {
+                    LOGGER.warn("[ W ] Couldn't get user form cookie!");
                 }
             }
         }
         LOGGER.info("[ I ] WebSocket not authorized.");
-        return new Pair<>(false, 0L);
+        return null;
     }
 
     @Override
     @Nullable
     public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp)
     {
-        final Pair<Boolean, Long> authInfo = isAuthorized(req);
-        if (authInfo.getKey()) {
+        final Client authClient = isAuthorized(req);
+        if (authClient != null) {
             for (String subprotocol : req.getSubProtocols())
             {
                 if ("text".equals(subprotocol))
                 {
                     resp.setAcceptedSubProtocol(subprotocol);
-
-                    //return new MessagingSocket(service, authInfo.getValue());
+                    return new MessageSocket(service, authClient);
                 }
             }
 

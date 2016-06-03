@@ -1,6 +1,7 @@
 package server.messaging;
 
 import game.PlayingUser;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * created: 5/25/2016
@@ -8,17 +9,24 @@ import game.PlayingUser;
  */
 public class Client {
     private final PlayingUser user;
-    private final int clientId;
+    private long clientId = 0;
 
-    public Client(PlayingUser user, int clientId) {
+    public Client(PlayingUser user) {
         this.user = user;
-        this.clientId = clientId;
     }
+
+
 
     public PlayingUser getUser() {
         return user;
     }
-    public int getClientId() {
+
+    public void setClientId(@NotNull long id) {
+        this.clientId = id;
+    }
+
+    @NotNull
+    public long getClientId() {
         return clientId;
     }
 }
