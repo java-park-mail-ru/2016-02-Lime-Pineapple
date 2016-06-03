@@ -1,8 +1,8 @@
-package db.models.game.cards.effects;
+package game;
 
+import db.models.game.cards.CardModel;
 import game.GameRoom;
 import game.PlayingUser;
-import db.models.game.cards.BaseCard;
 
 import javax.validation.constraints.NotNull;
 
@@ -21,7 +21,7 @@ public interface ICardEffect {
     @NotNull
     String getCardEffectType();
 
-    void activateCardEffect(BaseCard linkedCard, PlayingUser cardUser, GameRoom cardOrigin );
+    void activateCardEffect(CardModel linkedCard, PlayingUser cardUser, GameRoom cardOrigin );
 
 
 }

@@ -3,6 +3,7 @@ package game;
 import db.models.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import server.rest.UserServlet;
 
 /**
  * created: 12-Mar-16
@@ -12,35 +13,33 @@ import org.jetbrains.annotations.Nullable;
 // This class describes user state during game
 public class PlayingUser {
     private User linkedUser;
-    private long currentScore = 0;
+    private int currentScore = 0;
     private short lives = 0;
-    private GameRoom room;
 
     @NotNull
     public User getLinkedUser() {
         return linkedUser;
     }
-
     @NotNull
-    public Long getCurrentScore() {
+    public Integer getCurrentScore() {
         return currentScore;
     }
 
-    public void setCurrentScore(@NotNull Long score) {
+    public void setCurrentScore(@NotNull Integer score) {
         this.currentScore = score;
     }
 
-    public void incrementScore(@NotNull Long delta) {
+    public void incrementScore(@NotNull Integer delta) {
         this.currentScore += delta;
     }
 
-    @Nullable
-    public GameRoom getCurrentRoom() {
-        return this.room;
-    }
 
     public PlayingUser(@NotNull  User user) {
         this.linkedUser = user;
     }
 
+
+    public String getName() {
+        return linkedUser.getUsername();
+    }
 }

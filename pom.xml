@@ -80,6 +80,7 @@
         </plugins>
     </build>
     <dependencies>
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
@@ -98,18 +99,6 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils-core</artifactId>
-            <version>1.8.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils-bean-collections</artifactId>
-            <version>1.8.3</version>
         </dependency>
 
 
@@ -206,8 +195,6 @@
             <artifactId>jersey-media-json-jackson</artifactId>
             <version>${org.glassfish.jersey.version}</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>org.freemarker</groupId>

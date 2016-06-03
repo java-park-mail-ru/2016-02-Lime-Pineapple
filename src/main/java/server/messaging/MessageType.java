@@ -7,5 +7,6 @@ package server.messaging;
 public enum MessageType {
     BACKBONE,
     GAME,
-    MATCHMAKING
+    MATCHMAKING,
+    SYSTEM,
 }

@@ -13,7 +13,7 @@
 
         <!-- Assume students is the database name -->
         <property name="hibernate.connection.url">
-            jdbc:mysql://127.0.0.1:3306/tpjava_test
+            jdbc:mysql://127.0.0.1:3306/tpjava_test?autoReconnect=true
         </property>
         <property name="hibernate.connection.username">
             tpdb_admin
@@ -33,5 +33,8 @@
 
         <property name='show_sql'>true</property>
         <mapping class="db.models.User" />
+        <mapping class="db.models.game.cards.CardModel" />
+        <mapping class="db.models.game.cards.EffectModel" />
+
     </session-factory>
 </hibernate-configuration>

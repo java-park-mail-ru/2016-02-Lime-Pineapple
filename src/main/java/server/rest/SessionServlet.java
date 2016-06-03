@@ -1,6 +1,7 @@
 package server.rest;
 
 import com.google.gson.JsonObject;
+import db.exceptions.DatabaseException;
 import db.services.AccountService;
 
 import javax.inject.Inject;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import db.models.User;
+import game.services.GameEngineService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.rest.common.Utils;
@@ -23,11 +25,13 @@ import java.rmi.AccessException;
 public class SessionServlet extends HttpServlet {
 
     private AccountService accountService;
+    private GameEngineService gameEngineService;
     private static final Logger LOGGER = LogManager.getLogger(SessionServlet.class);
 
     @Inject
     public SessionServlet(AccountService accountService) {
         this.accountService = accountService;
+        //gameEngineService=engineService;
         LOGGER.info("[!] Initialized");
     }
 
@@ -57,7 +61,7 @@ public class SessionServlet extends HttpServlet {
                     idJs.addProperty("id", 1L);
                     return Response.status(Response.Status.OK).entity(idJs.toString()).build();
                 }
-            } catch (AccessException e) {
+            } catch (DatabaseException e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
             }
         }
@@ -77,9 +81,10 @@ public class SessionServlet extends HttpServlet {
                 final JsonObject idJs = new JsonObject();
                 currentSession.setAttribute(Utils.USER_ID_KEY, realUser.getId());
                 idJs.addProperty("id", realUser.getId());
+                //gameEngineService.userLogin(realUser);
                 return Response.status(Response.Status.OK).entity(idJs.toString()).build();
             }
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString()).build();
         }
 
@@ -90,6 +95,14 @@ public class SessionServlet extends HttpServlet {
     public Response removeSession(@Context HttpServletRequest request) {
         final HttpSession currentSession = request.getSession();
         currentSession.removeAttribute(Utils.USER_ID_KEY);
+        /*final Long uid = getIdFromRequest(request);
+        try{
+            final User realUser = this.accountService.getUser(uid);
+            if (realUser!=null) gameEngineService.userLogout(realUser);
+        }
+        catch (AccessException e) {
+            LOGGER.error(e.getMessage());
+        }*/
         return Response.status(Response.Status.OK).entity(Utils.EMPTY_JSON).build();
 
     }

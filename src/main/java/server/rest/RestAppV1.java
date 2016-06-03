@@ -1,7 +1,6 @@
 package server.rest;
 
 import db.services.AccountService;
-import game.services.MessagingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;

@@ -1,5 +1,6 @@
 package db.services;
 
+import db.exceptions.DatabaseException;
 import db.models.User;
 import db.models.UserScore;
 import db.services.impl.db.AccountDAO;
@@ -28,6 +29,7 @@ import static junit.framework.TestCase.fail;
  */
 public class DBAccountServiceImplTest {
     static final Logger LOGGER = LogManager.getLogger();
+    public static final int BEST_SCORE_MAX = 20;
 
     @Test
     public void testSmokeHibernateConfiguration() {
@@ -56,7 +58,7 @@ public class DBAccountServiceImplTest {
         }
     }
 
-    private void pnh(AccessException e) {
+    private void pnh(DatabaseException e) {
         fail(String.format("AccessException in Test: %n%s", e.toString()));
     }
 
@@ -66,20 +68,20 @@ public class DBAccountServiceImplTest {
         final DBAccountServiceImpl dba = new DBAccountServiceImpl(sessionFactory, new AccountDAO());
         try {
             dba.clear();
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
 
         return dba;
     }
 
-    public User createAndSelectRandom(DBAccountServiceImpl dba) throws AccessException {
+    public User createAndSelectRandom(DBAccountServiceImpl dba) throws DatabaseException {
         final List<User> ids = new ArrayList<>();
         for(int i = 1; i<=100; ++i) {
             final User user = new User(String.format("test%d",i), String.format("test%dPassword",i));
             user.setScore((int) Math.round(Math.random()*100));
             user.setPlayedGames((int)Math.round(Math.random()*100));
-            user.setBestScore((int)Math.round(Math.random()*20));
+            user.setBestScore((int)Math.round(Math.random()* BEST_SCORE_MAX));
             dba.addUser(user);
             ids.add(user);
         }
@@ -96,7 +98,7 @@ public class DBAccountServiceImplTest {
             }
             dba.clear();
             assertEquals("Users count is not 0", 0, dba.getCount());
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -109,7 +111,7 @@ public class DBAccountServiceImplTest {
                 dba.addUser(new User(String.format("test%d",i), "test"));
             }
             assertEquals("Actual user count does not match creation count", 10, dba.getCount());
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -123,7 +125,7 @@ public class DBAccountServiceImplTest {
             final User actual = dba.getUser(id);
             assertTrue("Actual user from db does not match created one",
                     created.getUsername().equals(actual.getUsername()) && created.getPassword().equals(actual.getPassword()));
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -139,7 +141,7 @@ public class DBAccountServiceImplTest {
             final User actualUser = dba.getUser(user.getId());
             assertEquals("Actual user from db does not match created one",
                     user, actualUser);
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -150,7 +152,7 @@ public class DBAccountServiceImplTest {
             final DBAccountServiceImpl dba = prepareDB();
             final User user = createAndSelectRandom(dba);
             assertTrue("DBA hasUser() returned false", dba.hasUser(user.getId()));
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -161,7 +163,7 @@ public class DBAccountServiceImplTest {
         try {
             final User user = createAndSelectRandom(dba);
             assertTrue("DBA hasUser() returned false", dba.hasUser(user.getUsername()));
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -174,7 +176,7 @@ public class DBAccountServiceImplTest {
             final User actualUser = dba.getUser(user.getUsername());
             assertEquals("Actual user from db does not match created one",
                     user, actualUser);
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -186,7 +188,7 @@ public class DBAccountServiceImplTest {
             final User user = createAndSelectRandom(dba);
             dba.removeUser(user.getId());
             assertNull(dba.getUser(user.getId()));
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -198,7 +200,7 @@ public class DBAccountServiceImplTest {
             final User user = createAndSelectRandom(dba);
             dba.removeUser(user.getUsername());
             assertNull(dba.getUser(user.getUsername()));
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -222,7 +224,7 @@ public class DBAccountServiceImplTest {
             dba.changeUser(user);
             user = dba.getUser(newName);
             assertEquals("Local and remote users are not the same", modelUser, user);
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -243,7 +245,7 @@ public class DBAccountServiceImplTest {
                         "Model UserScore (got from username of actual score itself) is not the same as actual one",
                         modelUs, us);
             }
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -268,7 +270,7 @@ public class DBAccountServiceImplTest {
                         "Sorting probably sucks. Mismatch in actual and model sorting",
                         userScoresSortModel.get(i), userScoresActual.get(i));
             }
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
@@ -283,7 +285,7 @@ public class DBAccountServiceImplTest {
             assertTrue("Account service couldn't create user in database", testId != 0);
             assertTrue("Account service reports that test user does not exists", dba.hasUser(testId));
             dba.removeUser(testId);
-        } catch (AccessException e) {
+        } catch (DatabaseException e) {
             pnh(e);
         }
     }
