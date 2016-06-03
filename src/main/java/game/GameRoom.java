@@ -1,143 +1,133 @@
 package game;
 
-import db.models.game.cards.BaseCard;
+import db.models.User;
+import db.models.game.cards.CardModel;
+import game.services.GameCardService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+// ВНИМАНИЕ: это простая модель, она не несёт никакой логики
+@SuppressWarnings("CallToSimpleSetterFromWithinClass")
 public class GameRoom {
     static final Logger LOGGER = LogManager.getLogger(GameRoom.class);
-    private RoomStatus roomStatus = RoomStatus.LOOKING_FOR_PEOPLE; //класс должен быть абстрактным или иметь переопределенный метод
+
+    // ROOM STATS
+    final long id;
+    RoomStatus roomStatus = RoomStatus.LOOKING_FOR_PEOPLE;
+    final PlayingUser[] users = new PlayingUser[2];
+
+    final GameCardService gameCardService;
+    final ReadWriteLock rwLock = new ReentrantReadWriteLock();
+
     //GAME VALUES
-    private short totalCards;
-    @Nullable
-    private String winner;
-    private short playedCards=0;
-    private BaseCard[][] deck; //current game deck
-    @Nullable
-    private PlayingUser creator;
-    @Nullable
-    private PlayingUser opponent;
-    private List<BaseCard> creatorHands;
-    private List<BaseCard> opponentHands;//cards which users possess and able to activate
-    private long id;
-    private HashMap<PlayingUser, BaseCard> userHands; //cards which users possess and able to activate
-    // TODO: change this to store info about playing users in particular room only in one place (for example: in cookies)
+    private final short cardsInHandByPlayer; // количество кард у одного игрока в руке
+
+    private final Map<PlayingUser, Card[]> playerHands = new ConcurrentHashMap<>(); // карты в руке игрока
+
     @NotNull
     public RoomStatus getRoomStatus() {
-        return roomStatus;
+        return this.roomStatus;
     }
-
-    public boolean setRoomStatus(@NotNull RoomStatus room) {
-        try {
-            roomStatus = room;
-            //trigger event
-
-            return true;
-        }
-        catch (Throwable t) {
-            System.out.println("Error setting status");
-            return false;
-        }
-    }
-
-
-    public void validate() {
-        //does nothing
-    }
-    public void setId(long id1) {
-        this.id=id1;
+    // просто меняет состояние комнаты. Ничего не отправляем
+    public void setRoomStatus(@NotNull RoomStatus status) {
+        this.roomStatus = status;
     }
 
     public long getId() {
         return id;
     }
 
-    public GameRoom(@NotNull PlayingUser autor, short cards) {
-        creator=autor;
-        opponent=null;
-        totalCards=cards;
-        setRoomStatus(RoomStatus.WAITING_FOR_PLAYERS);
+    public GameRoom(@NotNull GameCardService gameCardService, long id, short totalHandCards) {
+        this.id = id;
+        this.cardsInHandByPlayer = totalHandCards;
+        this.gameCardService = gameCardService;
     }
-    public void opponentAdded(PlayingUser user) {
-        opponent = user;
-        setRoomStatus(RoomStatus.PREPARING_FOR_GAME);
-    }
-    public void startGame() {
-        setRoomStatus(RoomStatus.GAME_PHASE);
 
+    public short getCardsInHandByPlayer() {
+        return cardsInHandByPlayer;
     }
-    public void pauseGame() {
-        setRoomStatus(RoomStatus.PAUSE_PHASE);
-    }
-    public void continueGame() {
-        setRoomStatus(RoomStatus.GAME_PHASE);
-    }
-    public int playCard() {
-        playedCards++;
-        //Что происходит при разыгрывании карты
-        if (playedCards >= totalCards) setRoomStatus(RoomStatus.FINISHED);
-        return 1;
-    }
-    public void userExited(PlayingUser user) {
-        if (roomStatus!=RoomStatus.FINISHED) {
-            if (creator!=null && user.getName().equals(creator.getName())) {
 
-                if (opponent!=null){ opponent.win(); winner=opponent.getLinkedUser().getNickname(); }
-                if (creator!=null) creator.lose();
-                roomStatus = RoomStatus.FINISHED;
-                creator = null;
-            } else {
-                if (opponent!=null) opponent.lose();
-                if (creator!=null) { creator.win(); winner=creator.getLinkedUser().getNickname(); }
-                roomStatus = RoomStatus.FINISHED;
-                opponent = null;
-            }
-        }
-        else {
-            if (user.equals(creator)) {
-                creator=null;
-            }
-            else opponent=null;
-        }
-    }
-    @Nullable
-    public String gameOver() {
+    public void addUser(@NotNull PlayingUser user) {
+        rwLock.writeLock().lock();
         try {
-            if (opponent!=null && creator!=null) {
-                if (opponent.getCurrentScore() > creator.getCurrentScore()) {
-                    opponent.win();
-                    winner = opponent.getLinkedUser().getNickname();
-                    creator.lose();
-                } else {
-                    creator.win();
-                    winner = creator.getLinkedUser().getNickname();
-                    opponent.lose();
+            for (int i = 0, s = users.length; i<s; ++i) {
+                if (users[i] != null) {
+                    users[i] = user;
+                    this.playerHands.put(user, gameCardService.makeHand(this.cardsInHandByPlayer));
                 }
-                roomStatus = RoomStatus.FINISHED;
+                else if (Objects.equals(users[i], user))
+                {
+                    LOGGER.warn("Adding same user to room twice");
+                    return;
+                }
             }
-            return winner;
+        } catch(Throwable t) {
+            LOGGER.warn(String.format("Exception during adding user into room.%n%s", t.toString()));
+            rwLock.writeLock().unlock();
         }
-        catch (NullPointerException e) {
-            LOGGER.error(e.getMessage());
-            return "error";
-        }
-    }
-    public boolean isempty() {
-        return (creator==null && opponent==null);
-    }
-    @Nullable
-    public PlayingUser getOpponent(PlayingUser user) {
 
-        if (creator != null && opponent!=null) {
-            if (creator.getName().equals(user.getName())) return opponent;
-            else if (opponent.getName().equals(user.getName())) return creator;
-            else return null;
+    }
+
+    @NotNull
+    public Card[] getHand(PlayingUser user) {
+        return this.playerHands.get(user);
+    }
+
+    @NotNull
+    public Set<Map.Entry<PlayingUser, Card[]>> getPlayerHands() {
+        return this.playerHands.entrySet();
+    }
+
+    @NotNull
+    public PlayingUser getAnotherPlayer(PlayingUser thisPlayer) {
+        for (PlayingUser user : this.users) {
+            if (!Objects.equals(user, thisPlayer)) {
+                return user;
+            }
         }
-        else return null;
+        throw new RuntimeException("Could not find another user. Every user in room equals this user!");
+    }
+
+    public boolean hasUser(PlayingUser user) {
+        return Arrays.asList(users).contains(user);
+    }
+
+
+    public boolean isEmpty() {
+        for (PlayingUser user : this.users) {
+            if (user != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void removeUser(PlayingUser user) {
+        rwLock.writeLock().lock();
+        for (int i = 0, s = this.users.length; i<s; ++i) {
+            if (Objects.equals(this.users[i], user))
+                this.users[i] = null;
+        }
+        rwLock.writeLock().unlock();
+    }
+
+    public Set<PlayingUser> getUsers() {
+        rwLock.readLock().lock();
+        final Set<PlayingUser> set = Collections.synchronizedSet(new HashSet<>());
+        try {
+            Collections.addAll(set, this.users);
+            return set;
+        } catch (Throwable e) {
+            LOGGER.warn(String.format("Exception during adding user into room.%n%s", e.toString()));
+            rwLock.writeLock().unlock();
+            throw e;
+        }
     }
 }

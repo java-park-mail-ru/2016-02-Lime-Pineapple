@@ -1,99 +1,138 @@
 package game.services;
 
+import db.exceptions.DatabaseException;
 import db.models.User;
+import db.services.AccountService;
 import game.GameRoom;
 import game.PlayingUser;
-import game.RoomStatus;
-import org.jetbrains.annotations.Nullable;
+import game.services.messages.EndGameMessageResponse;
+import game.services.messages.GameMessageDeserializer;
+import game.services.messages.PlayerActMessage;
+import server.messaging.messages.SystemMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import server.messaging.Client;
+import server.messaging.MessageService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import java.io.IOException;
 
 /**
  * created: 5/25/2016
  * package: game.services
  */
 public class GameEngineService {
-    private Map<Long, GameRoom> activeRooms;
-    final AtomicLong counter = new AtomicLong(0L);
-    final AtomicLong userCounter=new AtomicLong(0L);
-    Map<Long, PlayingUser> activeUsers;
-    void createRoom(PlayingUser founder, short cards) {
-        final long newRoomId=counter.incrementAndGet();
-        founder.setRoom(newRoomId);
-        activeRooms.put(newRoomId, new GameRoom(founder,cards));
-        activeRooms.get(newRoomId).setId(newRoomId);
+    static final Logger LOGGER = LogManager.getLogger();
+    final MessageService messageService;
+    final AccountService accountService;
+
+    final GameMessageDeserializer deserializer;
+
+    public GameEngineService(@NotNull GameMessageDeserializer deserializer,
+                      @NotNull MessageService messageService,
+                      @NotNull AccountService accountService) {
+        this.messageService = messageService;
+        this.accountService = accountService;
+        this.deserializer = deserializer;
     }
-    void addUserToRoom(PlayingUser client, long roomId) {
-        client.setRoom(roomId);
-        activeRooms.get(roomId).opponentAdded(client);
+
+    // Конфигурирует сервис: запускает слушатели событий на сервисе сообщений
+    public void configure() {
+        this.messageService.subscribe(SystemMessage.MESSAGES.CLIENT_DISCONNECTED, (client, message)->{
+            this.onClientDisconnected(client);
+        });
+        this.messageService.subscribe(PlayerActMessage.MESSAGE_NAME, (client, message) -> {
+            final PlayerActMessage gm = (PlayerActMessage) deserializer.deserialize(message);
+            this.onPlayerAct(client, gm);
+        });
     }
-    void removeUserFromRoom(PlayingUser user, long roomId) {
-        activeRooms.get(roomId).userExited(user);
-    }
-    void deleteRoom(long roomId) {
-        if (activeRooms.get(roomId).isempty()) {
-            activeRooms.remove(roomId);
+
+
+    // METHODS
+
+
+
+    // ENGINE LOGIC GAME
+
+
+    void endGame(@NotNull GameRoom room,@NotNull Client winnerClient,@NotNull EndGameReason reason) {
+        final PlayingUser winner = winnerClient.getUser();
+        final PlayingUser loser = room.getAnotherPlayer(winnerClient.getUser());
+        final User winnerUser = winner.getLinkedUser();
+        final User loserUser = loser.getLinkedUser();
+        // обновим данные победителя
+        try {
+            this.accountService.updateUserStats(winnerUser, winner.getCurrentScore());
+        } catch (DatabaseException e) {
+            LOGGER.warn(String.format("[ W ] Exception during user stats update: %s", e.toString()));
         }
-        else {
-            if (activeRooms.get(roomId).getRoomStatus()==RoomStatus.FINISHED) activeRooms.remove(roomId);
-        }
-    }
-    Collection<GameRoom> showRooms() {
-        return activeRooms.values();
-    }
-    Collection<GameRoom> availableRooms() {
-        final Collection<GameRoom> waiting=new ArrayList<>();
-        waiting.add(new GameRoom(new PlayingUser(new User("11","11")),(short) 1));
-        for (Long id : activeRooms.keySet()) {
-            if (activeRooms.get(id).getRoomStatus()== RoomStatus.LOOKING_FOR_PEOPLE) {
-                waiting.add(activeRooms.get(id));
+        // отправляем сообщения об окончании игры
+        try {
+            switch (reason) {
+                case DISCONNECT:
+                    this.messageService.sendMessage(winnerClient, new EndGameMessageResponse(winnerUser, reason));
+                    break;
+                case WE_HAVE_A_WINNER:
+                    // обновим данные проигравшего, но только если он не отключался
+                    try {
+                        this.accountService.updateUserStats(loserUser, loser.getCurrentScore());
+                    } catch (DatabaseException e) {
+                        LOGGER.warn(String.format("[ W ] Exception during user stats update: %s", e.toString()));
+                    }
+                    this.messageService.sendMessage(room, new EndGameMessageResponse(winnerUser, reason));
+                    break;
+                case JUST_BECAUSE:
+                    LOGGER.warn("[ W ] Wow, end game reason is just because?");
+                    this.messageService.sendMessage(room, new EndGameMessageResponse(null, reason));
+                    break;
             }
+        } catch (IOException e) {
+            LOGGER.warn(String.format("[ W ]Could not send message to endpoint. WTF?%n%s", e.toString()) );
         }
-        return waiting;
-    }
-    void deleteEmptyRooms() {
-        for (Long id : activeRooms.keySet()) {
-            if (activeRooms.get(id).isempty()) {
-                activeRooms.remove(id);
-            }
-        }
-    }
-    public GameEngineService() {
-        activeRooms=new ConcurrentHashMap<>();
-        activeUsers=new ConcurrentHashMap<>();
-    }
-    public void cardPlayed(Long roomID) {
 
     }
-    public void userLogin(User user) {
-        activeUsers.put(userCounter.incrementAndGet(),new PlayingUser(user));
+
+    void playerAct(@NotNull GameRoom room, @NotNull PlayingUser actor, @NotNull PlayerActMessage.PlayerActData actData) {
+        // выполняем действия до действия юзера
+
+        // обрабатываем действия юзера
+        // действия юзера - активировал карту босса, поставил карту на поле, пропустил ход.
+
+        // выполняем действия после хода юзера
+
+        // отсылаем сообщения
     }
-    public long getRoomIdByUser(PlayingUser user) {
-        return user.getCurrentRoom();
-    }
-    public void userLogout(User user) {
-        for (Long id : activeUsers.keySet()) {
-            if (activeUsers.get(id).getName().equals(user.getUsername())) {
-                final PlayingUser logoutUser=activeUsers.get(id);
-                userExitedRoom(logoutUser);
-                activeUsers.remove(id);
-            }
+
+
+    // MESSAGE HANDLERS
+
+    private void onPlayerAct(Client client, PlayerActMessage message) {
+        try {
+            final GameRoom room = messageService.getRoom(client);
+            assert (PlayerActMessage.PlayerActData) message.getData() != null;
+            this.playerAct(room, client.getUser(), (PlayerActMessage.PlayerActData) message.getData());
+        } catch (Throwable t) {
+            LOGGER.warn(String.format("[ W ] Exception during event handler: onPlayerAct. Malformed message?%n%s", t.toString()));
         }
+
     }
-    @Nullable
-    public PlayingUser getUserOpponent(PlayingUser user) {
-        if (user.getCurrentRoom()==-1L) return null;
-        final GameRoom userRoom=activeRooms.get(user.getCurrentRoom());
-        return userRoom.getOpponent(user);
-    }
-    public void userExitedRoom(PlayingUser user) {
-        if (user.getCurrentRoom()!=-1L) {
-            activeRooms.get(user.getCurrentRoom()).userExited(user);
-            user.setRoom(-1L);
+
+    private void onClientDisconnected(Client client) {
+        try {
+            final GameRoom room = messageService.getRoom(client);
+            this.endGame(room, client, EndGameReason.DISCONNECT);
+        } catch (Throwable t) {
+            LOGGER.warn(String.format("[ W ] Exception during event handler: onClientDisconnected(). Is client without room disconnected?%n%s", t.toString()));
         }
+
     }
+
+    // INNER CLASSES
+
+    public enum EndGameReason {
+        DISCONNECT,
+        WE_HAVE_A_WINNER,
+        JUST_BECAUSE
+    }
+
 }

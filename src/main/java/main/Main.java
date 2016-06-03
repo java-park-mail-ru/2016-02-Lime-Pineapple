@@ -5,7 +5,8 @@ import db.services.impl.db.AccountDAO;
 import db.services.impl.db.DBAccountServiceImpl;
 import db.services.impl.db.DBSessionFactoryService;
 import game.services.GameEngineService;
-import server.messaging.MessagingService;
+import game.services.messages.GameMessageDeserializer;
+import server.messaging.MessageService;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -33,7 +34,6 @@ import java.net.InetSocketAddress;
 //import java.util.Properties;
 
 import static java.lang.Integer.parseInt;
-import java.util.Properties;
 
 import static java.lang.Integer.parseInt;
 
@@ -43,7 +43,6 @@ public class Main {
 
     public static final int DEFAULT_PORT = 9999;
     public static final String DEFAULT_PROP_PATH = "cfg/server.properties";
-    protected static final GameEngineService gameServer=new GameEngineService();
 
     @NotNull
     static Configuration loadProperties(Context serverContext) throws Throwable {
@@ -115,7 +114,8 @@ public class Main {
         return resourceHandler;
     }
 
-    static void configureRestApi(Context serverContext, ServletContextHandler contextHandler) {
+    static void configureRestApi(@NotNull Context serverContext,
+                                 @NotNull ServletContextHandler contextHandler) {
         final ResourceConfig application = new RestAppV1(serverContext)
                 .register(JacksonFeature.class);
         final ServletHolder servletHolder = new ServletHolder(new ServletContainer(application));
@@ -125,17 +125,22 @@ public class Main {
 
 
 
-    static void configureAccountService(Context serverContext) {
+    static AccountService configureAccountService(@NotNull  Context serverContext) {
         final DBSessionFactoryService factory = new DBSessionFactoryService();
         factory.configure();
         final AccountService service = new DBAccountServiceImpl(factory, new AccountDAO());
         serverContext.put(AccountService.class , service);
         serverContext.put(DBSessionFactoryService.class, factory);
+        return service;
     }
     // TODO: Rename it to "configureGame"
-    static void configureMessagingService(Context serverContext, ServletContextHandler contextHandler) {
-
-        serverContext.put(MessagingService.class, new MessagingService(gameServer));
+    static void configureGame(@NotNull Context serverContext,
+                              @NotNull ServletContextHandler contextHandler,
+                              @NotNull AccountService accountService) {
+        final MessageService messageService = new MessageService();
+        serverContext.put(MessageService.class, messageService);
+        final GameMessageDeserializer gameMessageDeserializer = new GameMessageDeserializer();
+        final GameEngineService gameServer = new GameEngineService(gameMessageDeserializer, messageService, accountService);
         final ServletHolder holderSockets = new ServletHolder("ws-events", MessagingServlet.class);
         contextHandler.addServlet(holderSockets, "/sockets/*");
     }
@@ -157,8 +162,8 @@ public class Main {
         final ResourceHandler resourceHandler = initializeResourceHandler();
         final ServletContextHandler contextHandler = initializeContextHandler(serverContext);
 
-        configureAccountService(serverContext);
-        configureMessagingService(serverContext, contextHandler);
+        final AccountService accountService = configureAccountService(serverContext);
+        configureGame(serverContext, contextHandler, accountService);
         configureRestApi(serverContext, contextHandler);
         configureServer(new Handler[]{resourceHandler, contextHandler}, server);
 
